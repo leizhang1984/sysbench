@@ -1,0 +1,73 @@
+# ==================== Elasticsearch Configuration ====================
+# This is the elasticsearch configuration for DSv5 cluster (CentOS 7.9)
+#
+# ======================== Network and HTTP ========================
+#
+network.host: 0.0.0.0
+http.port: 9200
+transport.tcp.port: 9300
+
+# ======================== Path Settings ============================
+#
+path.data: /esdata/data
+path.logs: /var/log/elasticsearch
+
+# ======================== Discovery ================================
+#
+# Discovery.seed hosts: typically includes other master-eligible nodes
+# These IPs will be populated during deployment
+discovery.zen.ping.unicast.hosts: 
+  - 10.122.0.4
+  - 10.122.0.5
+  - 10.122.0.6
+
+# Minimum master nodes for quorum (3 nodes, so minimum is 2)
+discovery.zen.minimum_master_nodes: 2
+
+# ======================== Cluster and Node Settings ================
+#
+cluster.name: es-dsv5-cluster
+# node.name will be set via HOSTNAME environment variable per instance
+# node.name: <HOSTNAME>
+
+# Node roles
+node.master: true
+node.data: true
+node.ingest: false
+
+# ======================== Availability Zone Awareness ==============
+#
+# Set node attributes for AZ awareness
+# This will be customized per node: zone1, zone2, or zone3
+node.attr.zone: zone1
+
+# Force AZ awareness on shard allocation
+cluster.routing.allocation.awareness.attributes: zone
+cluster.routing.allocation.awareness.force.zone.values: zone1,zone2,zone3
+
+# ======================== Memory Settings ==========================
+#
+# Make sure swappiness is set to 1 at system level
+bootstrap.memory_lock: false  # We handle via systemd
+
+# ======================== Bootstrap Checks ========================
+#
+# In test/dev environments, bypass some bootstrap checks
+# Production deployments should not have this
+bootstrap.ignore_system_bootstrap_checks: true
+
+# ======================== Index Settings ============================
+#
+# Default settings for indices
+index.refresh_interval: 1s
+index.number_of_replicas: 1
+index.number_of_shards: 3
+
+# ======================== Logging ===================================
+#
+# Log level: info, debug, warn, error
+logger.level: info
+
+# Specific component logging
+# logger.org.elasticsearch.discovery: DEBUG
+# logger.org.elasticsearch.cluster: DEBUG

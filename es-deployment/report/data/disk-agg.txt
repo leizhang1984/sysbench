@@ -1,0 +1,7 @@
+
+host=dsv5esmasterdata01 total_s=499 active_s=81 | AVG util=13.3% wr=23.0MBps iops=123 cpu=35.9% | PEAK util=76.6% wr=349.6MBps iops=1032
+host=dsv5esmasterdata02 total_s=498 active_s=86 | AVG util=23.9% wr=48.4MBps iops=234 cpu=67.3% | PEAK util=97.0% wr=329.3MBps iops=921
+host=dsv5esmasterdata03 total_s=499 active_s=83 | AVG util=26.6% wr=46.0MBps iops=233 cpu=68.5% | PEAK util=99.3% wr=416.0MBps iops=1223
+host=dsv6esmasterdata01 total_s=497 active_s=79 | AVG util=21.7% wr=49.6MBps iops=464 cpu=73.9% | PEAK util=100.6% wr=326.4MBps iops=1726
+host=dsv6esmasterdata02 total_s=497 active_s=77 | AVG util=10.8% wr=25.0MBps iops=240 cpu=29.3% | PEAK util=51.5% wr=250.6MBps iops=1277
+host=dsv6esmasterdata03 total_s=497 active_s=76 | AVG util=23.4% wr=51.2MBps iops=480 cpu=69.2% | PEAK util=101.4% wr=372.5MBps iops=2054

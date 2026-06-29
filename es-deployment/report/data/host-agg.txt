@@ -1,0 +1,7 @@
+
+host=dsv5esmasterdata01 samples=567 idle=95.61 busy=4.39 softirq=0.009 rx=136.9 tx=117.2 peak=53.92
+host=dsv5esmasterdata02 samples=564 idle=92.20 busy=7.80 softirq=0.015 rx=153.9 tx=132.0 peak=92.77
+host=dsv5esmasterdata03 samples=562 idle=92.00 busy=8.00 softirq=0.013 rx=150.6 tx=125.0 peak=93.01
+host=dsv6esmasterdata01 samples=561 idle=91.94 busy=8.06 softirq=0.033 rx=157.5 tx=117.7 peak=97.26
+host=dsv6esmasterdata02 samples=561 idle=96.52 busy=3.48 softirq=0.028 rx=141.2 tx=116.7 peak=46.48
+host=dsv6esmasterdata03 samples=559 idle=92.78 busy=7.22 softirq=0.034 rx=173.2 tx=129.1 peak=85.90

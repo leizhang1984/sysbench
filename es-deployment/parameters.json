@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "subscriptionId": {
+      "value": "166157a8-9ce9-400b-91c7-1d42482b83d6"
+    },
+    "resourceGroupName": {
+      "value": "es-rg"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "vnetName": {
+      "value": "es-vnet"
+    },
+    "subnetName": {
+      "value": "vm-subnet"
+    },
+    "dsv5VmSize": {
+      "value": "Standard_D8s_v5"
+    },
+    "dsv6VmSize": {
+      "value": "Standard_D8s_v6"
+    },
+    "clientVmSize": {
+      "value": "Standard_D32s_v6"
+    },
+    "adminUsername": {
+      "value": "azureuser"
+    },
+    "sshKeyPath": {
+      "value": "/home/azureuser/.ssh/id_rsa.pub"
+    },
+    "centosPublisher": {
+      "value": "OpenLogic"
+    },
+    "centosOffer": {
+      "value": "CentOS"
+    },
+    "centosSkuV7": {
+      "value": "7_9"
+    },
+    "rockyPublisher": {
+      "value": "erockyenterprisesoftwarefoundationinc1653071250513"
+    },
+    "rockyOffer": {
+      "value": "rockylinux-x86_64-base"
+    },
+    "rockySku": {
+      "value": "9-lvm"
+    },
+    "diskSizeGB": {
+      "value": 200
+    },
+    "diskIops": {
+      "value": 3000
+    },
+    "diskThroughputMBps": {
+      "value": 125
+    }
+  }
+}
