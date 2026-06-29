@@ -1,0 +1,681 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.44.1.10279",
+      "templateHash": "5142572712232380182"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "germanywestcentral",
+      "metadata": {
+        "description": "部署区域"
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "tidb-vnet",
+      "metadata": {
+        "description": "现有虚拟网络名称"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "vm-subnet",
+      "metadata": {
+        "description": "现有子网名称"
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "azureadmin",
+      "metadata": {
+        "description": "VM 管理员用户名"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "VM 管理员密码"
+      }
+    },
+    "sshSourceAddressPrefix": {
+      "type": "string",
+      "defaultValue": "*",
+      "metadata": {
+        "description": "允许 SSH 访问的来源 IP (按要求全开)"
+      }
+    },
+    "dataDiskSizeGB": {
+      "type": "int",
+      "defaultValue": 200
+    },
+    "dataDiskIops": {
+      "type": "int",
+      "defaultValue": 3000
+    },
+    "dataDiskMbps": {
+      "type": "int",
+      "defaultValue": 125
+    }
+  },
+  "variables": {
+    "centosImage": {
+      "publisher": "OpenLogic",
+      "offer": "CentOS",
+      "sku": "7_9",
+      "version": "7.9.2023030700"
+    },
+    "rockyImage": {
+      "publisher": "resf",
+      "offer": "rockylinux-x86_64",
+      "sku": "9-base",
+      "version": "9.6.20250531"
+    },
+    "rockyPlan": {
+      "name": "9-base",
+      "publisher": "resf",
+      "product": "rockylinux-x86_64"
+    },
+    "lbConfigs": [
+      {
+        "name": "dv5-lb",
+        "privateIp": "10.142.0.10"
+      },
+      {
+        "name": "dv6-lb",
+        "privateIp": "10.142.0.30"
+      }
+    ],
+    "vms": [
+      {
+        "name": "dv5tidb01",
+        "size": "Standard_D8s_v5",
+        "zone": "1",
+        "os": "centos",
+        "ip": "10.142.0.11",
+        "role": "cluster",
+        "lb": "dv5-lb"
+      },
+      {
+        "name": "dv5tidb02",
+        "size": "Standard_D8s_v5",
+        "zone": "2",
+        "os": "centos",
+        "ip": "10.142.0.12",
+        "role": "cluster",
+        "lb": "dv5-lb"
+      },
+      {
+        "name": "dv5tidb03",
+        "size": "Standard_D8s_v5",
+        "zone": "3",
+        "os": "centos",
+        "ip": "10.142.0.13",
+        "role": "cluster",
+        "lb": "dv5-lb"
+      },
+      {
+        "name": "dv5tikv01",
+        "size": "Standard_D8s_v5",
+        "zone": "1",
+        "os": "centos",
+        "ip": "10.142.0.21",
+        "role": "cluster",
+        "lb": ""
+      },
+      {
+        "name": "dv5tikv02",
+        "size": "Standard_D8s_v5",
+        "zone": "2",
+        "os": "centos",
+        "ip": "10.142.0.22",
+        "role": "cluster",
+        "lb": ""
+      },
+      {
+        "name": "dv5tikv03",
+        "size": "Standard_D8s_v5",
+        "zone": "3",
+        "os": "centos",
+        "ip": "10.142.0.23",
+        "role": "cluster",
+        "lb": ""
+      },
+      {
+        "name": "dv6tidb01",
+        "size": "Standard_D8s_v6",
+        "zone": "1",
+        "os": "rocky",
+        "ip": "10.142.0.31",
+        "role": "cluster",
+        "lb": "dv6-lb"
+      },
+      {
+        "name": "dv6tidb02",
+        "size": "Standard_D8s_v6",
+        "zone": "2",
+        "os": "rocky",
+        "ip": "10.142.0.32",
+        "role": "cluster",
+        "lb": "dv6-lb"
+      },
+      {
+        "name": "dv6tidb03",
+        "size": "Standard_D8s_v6",
+        "zone": "3",
+        "os": "rocky",
+        "ip": "10.142.0.33",
+        "role": "cluster",
+        "lb": "dv6-lb"
+      },
+      {
+        "name": "dv6tikv01",
+        "size": "Standard_D8s_v6",
+        "zone": "1",
+        "os": "rocky",
+        "ip": "10.142.0.41",
+        "role": "cluster",
+        "lb": ""
+      },
+      {
+        "name": "dv6tikv02",
+        "size": "Standard_D8s_v6",
+        "zone": "2",
+        "os": "rocky",
+        "ip": "10.142.0.42",
+        "role": "cluster",
+        "lb": ""
+      },
+      {
+        "name": "dv6tikv03",
+        "size": "Standard_D8s_v6",
+        "zone": "3",
+        "os": "rocky",
+        "ip": "10.142.0.43",
+        "role": "cluster",
+        "lb": ""
+      },
+      {
+        "name": "clientvm01",
+        "size": "Standard_D32s_v6",
+        "zone": "1",
+        "os": "rocky",
+        "ip": "10.142.0.51",
+        "role": "client",
+        "lb": ""
+      },
+      {
+        "name": "clientvm02",
+        "size": "Standard_D32s_v6",
+        "zone": "1",
+        "os": "rocky",
+        "ip": "10.142.0.52",
+        "role": "client",
+        "lb": ""
+      }
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2023-11-01",
+      "name": "nsg-cluster",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-SSH",
+            "properties": {
+              "priority": 100,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "[parameters('sshSourceAddressPrefix')]",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "Allow-Intra-VNet",
+            "properties": {
+              "priority": 110,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "destinationAddressPrefix": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2023-11-01",
+      "name": "nsg-client",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-SSH",
+            "properties": {
+              "priority": 100,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "[parameters('sshSourceAddressPrefix')]",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "Allow-Grafana",
+            "properties": {
+              "priority": 110,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3000",
+              "sourceAddressPrefix": "[parameters('sshSourceAddressPrefix')]",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "Allow-Intra-VNet",
+            "properties": {
+              "priority": 120,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "destinationAddressPrefix": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "copy": {
+        "name": "loadBalancers",
+        "count": "[length(variables('lbConfigs'))]"
+      },
+      "type": "Microsoft.Network/loadBalancers",
+      "apiVersion": "2023-11-01",
+      "name": "[variables('lbConfigs')[copyIndex()].name]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "frontend",
+            "properties": {
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+              },
+              "privateIPAddress": "[variables('lbConfigs')[copyIndex()].privateIp]",
+              "privateIPAllocationMethod": "Static"
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "tidb-pool"
+          }
+        ],
+        "probes": [
+          {
+            "name": "tidb-probe",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 4000,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "tidb-rule",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('lbConfigs')[copyIndex()].name, 'frontend')]"
+              },
+              "backendAddressPool": {
+                "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('lbConfigs')[copyIndex()].name, 'tidb-pool')]"
+              },
+              "probe": {
+                "id": "[resourceId('Microsoft.Network/loadBalancers/probes', variables('lbConfigs')[copyIndex()].name, 'tidb-probe')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 4000,
+              "backendPort": 4000,
+              "idleTimeoutInMinutes": 30,
+              "enableFloatingIP": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "copy": {
+        "name": "vmModule",
+        "count": "[length(variables('vms'))]"
+      },
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('deploy-{0}', variables('vms')[copyIndex()].name)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vmName": {
+            "value": "[variables('vms')[copyIndex()].name]"
+          },
+          "vmSize": {
+            "value": "[variables('vms')[copyIndex()].size]"
+          },
+          "zone": {
+            "value": "[variables('vms')[copyIndex()].zone]"
+          },
+          "privateIp": {
+            "value": "[variables('vms')[copyIndex()].ip]"
+          },
+          "subnetId": {
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+          },
+          "nsgId": "[if(equals(variables('vms')[copyIndex()].role, 'cluster'), createObject('value', resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-cluster')), createObject('value', resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-client')))]",
+          "hasDataDisk": {
+            "value": "[equals(variables('vms')[copyIndex()].role, 'cluster')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "imageReference": "[if(equals(variables('vms')[copyIndex()].os, 'centos'), createObject('value', variables('centosImage')), createObject('value', variables('rockyImage')))]",
+          "plan": "[if(equals(variables('vms')[copyIndex()].os, 'rocky'), createObject('value', variables('rockyPlan')), createObject('value', null()))]",
+          "backendPoolId": "[if(equals(variables('vms')[copyIndex()].lb, ''), createObject('value', ''), createObject('value', resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('vms')[copyIndex()].lb, 'tidb-pool')))]",
+          "dataDiskSizeGB": {
+            "value": "[parameters('dataDiskSizeGB')]"
+          },
+          "dataDiskIops": {
+            "value": "[parameters('dataDiskIops')]"
+          },
+          "dataDiskMbps": {
+            "value": "[parameters('dataDiskMbps')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "languageVersion": "2.0",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.44.1.10279",
+              "templateHash": "11766548830950051468"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string",
+              "metadata": {
+                "description": "部署区域"
+              }
+            },
+            "vmName": {
+              "type": "string",
+              "metadata": {
+                "description": "VM 名称"
+              }
+            },
+            "vmSize": {
+              "type": "string",
+              "metadata": {
+                "description": "VM 规格"
+              }
+            },
+            "zone": {
+              "type": "string",
+              "metadata": {
+                "description": "可用区"
+              }
+            },
+            "privateIp": {
+              "type": "string",
+              "metadata": {
+                "description": "内网静态 IP"
+              }
+            },
+            "subnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "子网资源 ID"
+              }
+            },
+            "nsgId": {
+              "type": "string",
+              "metadata": {
+                "description": "网络安全组资源 ID"
+              }
+            },
+            "hasDataDisk": {
+              "type": "bool",
+              "metadata": {
+                "description": "是否挂载 Premium SSD v2 数据盘"
+              }
+            },
+            "adminUsername": {
+              "type": "string"
+            },
+            "adminPassword": {
+              "type": "securestring"
+            },
+            "imageReference": {
+              "type": "object",
+              "metadata": {
+                "description": "镜像引用"
+              }
+            },
+            "plan": {
+              "type": "object",
+              "nullable": true,
+              "metadata": {
+                "description": "市场镜像 plan (Rocky 需要, CentOS 传 null)"
+              }
+            },
+            "backendPoolId": {
+              "type": "string",
+              "metadata": {
+                "description": "LB 后端池 ID (TiDB 节点传入, 其它传空字符串)"
+              }
+            },
+            "dataDiskSizeGB": {
+              "type": "int"
+            },
+            "dataDiskIops": {
+              "type": "int"
+            },
+            "dataDiskMbps": {
+              "type": "int"
+            }
+          },
+          "resources": {
+            "publicIp": {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2023-11-01",
+              "name": "[format('{0}-pip', parameters('vmName'))]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard"
+              },
+              "zones": [
+                "[parameters('zone')]"
+              ],
+              "properties": {
+                "publicIPAllocationMethod": "Static",
+                "publicIPAddressVersion": "IPv4"
+              }
+            },
+            "nic": {
+              "type": "Microsoft.Network/networkInterfaces",
+              "apiVersion": "2023-11-01",
+              "name": "[format('{0}-nic', parameters('vmName'))]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "enableAcceleratedNetworking": true,
+                "networkSecurityGroup": {
+                  "id": "[parameters('nsgId')]"
+                },
+                "ipConfigurations": [
+                  {
+                    "name": "ipconfig1",
+                    "properties": {
+                      "subnet": {
+                        "id": "[parameters('subnetId')]"
+                      },
+                      "privateIPAddress": "[parameters('privateIp')]",
+                      "privateIPAllocationMethod": "Static",
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-pip', parameters('vmName')))]"
+                      },
+                      "loadBalancerBackendAddressPools": "[if(empty(parameters('backendPoolId')), createArray(), createArray(createObject('id', parameters('backendPoolId'))))]"
+                    }
+                  }
+                ]
+              },
+              "dependsOn": [
+                "publicIp"
+              ]
+            },
+            "dataDisk": {
+              "condition": "[parameters('hasDataDisk')]",
+              "type": "Microsoft.Compute/disks",
+              "apiVersion": "2023-10-02",
+              "name": "[format('{0}-datadisk', parameters('vmName'))]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "PremiumV2_LRS"
+              },
+              "zones": [
+                "[parameters('zone')]"
+              ],
+              "properties": {
+                "creationData": {
+                  "createOption": "Empty"
+                },
+                "diskSizeGB": "[parameters('dataDiskSizeGB')]",
+                "diskIOPSReadWrite": "[parameters('dataDiskIops')]",
+                "diskMBpsReadWrite": "[parameters('dataDiskMbps')]"
+              }
+            },
+            "vm": {
+              "type": "Microsoft.Compute/virtualMachines",
+              "apiVersion": "2023-09-01",
+              "name": "[parameters('vmName')]",
+              "location": "[parameters('location')]",
+              "zones": [
+                "[parameters('zone')]"
+              ],
+              "plan": "[parameters('plan')]",
+              "properties": {
+                "hardwareProfile": {
+                  "vmSize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                  "computerName": "[parameters('vmName')]",
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "adminPassword": "[parameters('adminPassword')]",
+                  "linuxConfiguration": {
+                    "disablePasswordAuthentication": false
+                  }
+                },
+                "storageProfile": {
+                  "imageReference": "[parameters('imageReference')]",
+                  "osDisk": {
+                    "name": "[format('{0}-osdisk', parameters('vmName'))]",
+                    "createOption": "FromImage",
+                    "managedDisk": {
+                      "storageAccountType": "Premium_LRS"
+                    },
+                    "diskSizeGB": 64
+                  },
+                  "dataDisks": "[if(parameters('hasDataDisk'), createArray(createObject('lun', 0, 'createOption', 'Attach', 'managedDisk', createObject('id', resourceId('Microsoft.Compute/disks', format('{0}-datadisk', parameters('vmName')))))), createArray())]"
+                },
+                "networkProfile": {
+                  "networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-nic', parameters('vmName')))]"
+                    }
+                  ]
+                },
+                "securityProfile": {
+                  "securityType": "Standard"
+                }
+              },
+              "dependsOn": [
+                "dataDisk",
+                "nic"
+              ]
+            }
+          },
+          "outputs": {
+            "publicIpAddress": {
+              "type": "string",
+              "value": "[reference('publicIp').ipAddress]"
+            },
+            "privateIpAddress": {
+              "type": "string",
+              "value": "[parameters('privateIp')]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "loadBalancers",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-client')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-cluster')]"
+      ]
+    }
+  ],
+  "outputs": {
+    "dv5LbPrivateIp": {
+      "type": "string",
+      "value": "10.142.0.10"
+    },
+    "dv6LbPrivateIp": {
+      "type": "string",
+      "value": "10.142.0.30"
+    },
+    "vmPublicIps": {
+      "type": "array",
+      "copy": {
+        "count": "[length(variables('vms'))]",
+        "input": {
+          "name": "[variables('vms')[copyIndex()].name]",
+          "publicIp": "[reference(resourceId('Microsoft.Resources/deployments', format('deploy-{0}', variables('vms')[copyIndex()].name)), '2025-04-01').outputs.publicIpAddress.value]"
+        }
+      }
+    }
+  }
+}

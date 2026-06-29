@@ -1,0 +1,19 @@
+﻿Enable succeeded: 
+[stdout]
+host=10.170.0.13
+=== register broker[0] (master) -> NameServer, minutes: 11:14 11:32 ===
+2026-06-12 11:14:17 INFO brokerOutApi_thread_2 - register broker[0]to name server 10.170.0.5:9876 OK
+2026-06-12 11:14:17 INFO brokerOutApi_thread_1 - register broker[0]to name server 10.170.0.6:9876 OK
+2026-06-12 11:14:17 INFO brokerOutApi_thread_4 - register broker[0]to name server 10.170.0.4:9876 OK
+2026-06-12 11:14:24 INFO brokerOutApi_thread_2 - register broker[0]to name server 10.170.0.4:9876 OK
+2026-06-12 11:14:24 INFO brokerOutApi_thread_3 - register broker[0]to name server 10.170.0.5:9876 OK
+2026-06-12 11:14:24 INFO brokerOutApi_thread_1 - register broker[0]to name server 10.170.0.6:9876 OK
+2026-06-12 11:14:54 INFO brokerOutApi_thread_2 - register broker[0]to name server 10.170.0.4:9876 OK
+2026-06-12 11:14:54 INFO brokerOutApi_thread_4 - register broker[0]to name server 10.170.0.5:9876 OK
+2026-06-12 11:14:54 INFO brokerOutApi_thread_3 - register broker[0]to name server 10.170.0.6:9876 OK
+2026-06-12 11:32:48 INFO brokerOutApi_thread_4 - register broker[0]to name server 10.170.0.5:9876 OK
+2026-06-12 11:32:48 INFO brokerOutApi_thread_3 - register broker[0]to name server 10.170.0.6:9876 OK
+2026-06-12 11:32:48 INFO brokerOutApi_thread_1 - register broker[0]to name server 10.170.0.4:9876 OK
+
+[stderr]
+

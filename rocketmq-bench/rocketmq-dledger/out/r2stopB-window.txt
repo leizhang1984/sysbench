@@ -1,0 +1,32 @@
+﻿Enable succeeded: 
+[stdout]
+=== r2stopB rows sec 138..160 ===
+epoch_ms,wall,sec,ok,fail,ok_total,fail_total,p50,p99,max,err
+1781235157136,03:32:37.136,138,1011,0,139040,0,1,2,2,
+1781235158136,03:32:38.136,139,1007,0,140046,0,1,1,2,
+1781235159136,03:32:39.136,140,1010,0,141056,0,1,1,2,
+1781235160137,03:32:40.137,141,326,0,141382,0,1,2,2,
+1781235161137,03:32:41.137,142,0,0,141382,0,0,0,0,
+1781235162137,03:32:42.137,143,0,0,141382,0,0,0,0,
+1781235163138,03:32:43.138,144,72,10,141454,10,1,40,40,MQClientException:4|RemotingTooMuchRequestException:6
+1781235164138,03:32:44.138,145,0,0,141454,10,0,0,0,MQClientException:4|RemotingTooMuchRequestException:6
+1781235165138,03:32:45.138,146,0,0,141454,10,0,0,0,MQClientException:4|RemotingTooMuchRequestException:6
+1781235166139,03:32:46.139,147,79,1,141533,11,1,2923,2923,MQClientException:4|RemotingTooMuchRequestException:7
+1781235167139,03:32:47.139,148,0,0,141533,11,0,0,0,MQClientException:4|RemotingTooMuchRequestException:7
+1781235168139,03:32:48.139,149,0,0,141533,11,0,0,0,MQClientException:4|RemotingTooMuchRequestException:7
+1781235169140,03:32:49.140,150,0,10,141533,21,0,0,0,MQClientException:4|RemotingTooMuchRequestException:17
+1781235170140,03:32:50.140,151,0,0,141533,21,0,0,0,MQClientException:4|RemotingTooMuchRequestException:17
+1781235171140,03:32:51.140,152,0,0,141533,21,0,0,0,MQClientException:4|RemotingTooMuchRequestException:17
+1781235172140,03:32:52.140,153,595,1,142128,22,1,2992,2994,MQClientException:4|RemotingTooMuchRequestException:18
+1781235173140,03:32:53.140,154,1005,0,143134,22,1,2,7,MQClientException:4|RemotingTooMuchRequestException:18
+1781235174141,03:32:54.141,155,1006,0,144139,22,1,3,12,MQClientException:4|RemotingTooMuchRequestException:18
+1781235175142,03:32:55.142,156,1010,0,145149,22,1,2,13,MQClientException:4|RemotingTooMuchRequestException:18
+1781235176142,03:32:56.142,157,997,0,146146,22,1,7,19,MQClientException:4|RemotingTooMuchRequestException:18
+1781235177142,03:32:57.142,158,1008,0,147155,22,1,2,4,MQClientException:4|RemotingTooMuchRequestException:18
+1781235178143,03:32:58.143,159,1007,0,148161,22,1,2,8,MQClientException:4|RemotingTooMuchRequestException:18
+1781235179143,03:32:59.143,160,1005,0,149166,22,1,2,2,MQClientException:4|RemotingTooMuchRequestException:18
+=== PRODUCE_DONE ===
+PRODUCE_DONE okTotal=229478 failTotal=22 runId=r2stopB
+
+[stderr]
+

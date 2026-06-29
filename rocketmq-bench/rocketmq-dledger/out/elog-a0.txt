@@ -1,0 +1,31 @@
+﻿Enable succeeded: 
+[stdout]
+tmq/logs/broker.log:2026-06-11 23:31:39 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=5 role=CANDIDATE currStoreRole=SLAVE cost=18
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:31:41 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=5 role=FOLLOWER currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:31:41 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=5 role=FOLLOWER currStoreRole=SLAVE cost=1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:49:16 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=5 role=CANDIDATE currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:49:16 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=5 role=CANDIDATE currStoreRole=SLAVE cost=0
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:49:17 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=6 role=CANDIDATE currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:49:17 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=6 role=CANDIDATE currStoreRole=SLAVE cost=0
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:49:17 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=6 role=FOLLOWER currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:49:17 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=6 role=FOLLOWER currStoreRole=SLAVE cost=1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:52:49 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=7 role=CANDIDATE currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:52:49 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=7 role=CANDIDATE currStoreRole=SLAVE cost=0
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:52:49 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=7 role=FOLLOWER currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:52:49 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=7 role=FOLLOWER currStoreRole=SLAVE cost=0
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:01:45 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=7 role=CANDIDATE currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:01:45 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=7 role=CANDIDATE currStoreRole=SLAVE cost=0
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:01:46 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=8 role=LEADER currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:01:46 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=8 role=LEADER currStoreRole=SYNC_MASTER cost=10
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:12:58 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=9 role=CANDIDATE currStoreRole=SYNC_MASTER
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:12:58 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=9 role=CANDIDATE currStoreRole=SLAVE cost=7
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:12:58 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=9 role=FOLLOWER currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:12:58 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=9 role=FOLLOWER currStoreRole=SLAVE cost=0
+--- last broker.log mtime / tail ts ---
+-rw-r--r--. 1 root root 821490 16:27:41 /datadisk/rocketmq/logs/broker.log
+2026-06-12 00:27:31 INFO BrokerControllerScheduledThread1 - Update slave delay offset from master, 10.170.0.11:10911
+2026-06-12 00:27:41 INFO BrokerControllerScheduledThread1 - Update slave consumer offset from master, 10.170.0.11:10911
+2026-06-12 00:27:41 INFO BrokerControllerScheduledThread1 - Update slave delay offset from master, 10.170.0.11:10911
+
+[stderr]
+

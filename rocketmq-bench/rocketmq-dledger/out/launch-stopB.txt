@@ -1,0 +1,10 @@
+﻿Enable succeeded: 
+[stdout]
+PROBE launched runId=stopB topic=ft_stop2 threads=10 dur=360 rate=100
+pid=206786
+--- first console lines ---
+[16:36:37.148] sec=1 ok=795 fail=0 okTotal=795 p50=1 p99=216 max=220 err=
+[16:36:38.150] sec=2 ok=1003 fail=0 okTotal=1799 p50=1 p99=2 max=4 err=
+
+[stderr]
+

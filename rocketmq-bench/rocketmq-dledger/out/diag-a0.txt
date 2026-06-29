@@ -1,0 +1,33 @@
+﻿Enable succeeded: 
+[stdout]
+=true, consumeFromMinEnable=true, consumeBroadcastEnable=true, retryQueueNums=1, retryMaxTimes=16, brokerId=0, whichBrokerWhenConsumeSlowly=1, notifyConsumerIdsChangedEnable=true]
+2026-06-12 00:59:22 INFO main - load exist subscription group, SubscriptionGroupConfig [groupName=CID_ONS-HTTP-PROXY, consumeEnable=true, consumeFromMinEnable=true, consumeBroadcastEnable=true, retryQueueNums=1, retryMaxTimes=16, brokerId=0, whichBrokerWhenConsumeSlowly=1, notifyConsumerIdsChangedEnable=true]
+2026-06-12 00:59:22 INFO main - load exist subscription group, SubscriptionGroupConfig [groupName=FILTERSRV_CONSUMER, consumeEnable=true, consumeFromMinEnable=true, consumeBroadcastEnable=true, retryQueueNums=1, retryMaxTimes=16, brokerId=0, whichBrokerWhenConsumeSlowly=1, notifyConsumerIdsChangedEnable=true]
+2026-06-12 00:59:22 INFO main - load exist subscription group, SubscriptionGroupConfig [groupName=probe_consumer_grp, consumeEnable=true, consumeFromMinEnable=true, consumeBroadcastEnable=true, retryQueueNums=1, retryMaxTimes=16, brokerId=0, whichBrokerWhenConsumeSlowly=1, notifyConsumerIdsChangedEnable=true]
+2026-06-12 00:59:22 INFO main - load exist subscription group, SubscriptionGroupConfig [groupName=CID_ONSAPI_PULL, consumeEnable=true, consumeFromMinEnable=true, consumeBroadcastEnable=true, retryQueueNums=1, retryMaxTimes=16, brokerId=0, whichBrokerWhenConsumeSlowly=1, notifyConsumerIdsChangedEnable=true]
+2026-06-12 00:59:22 INFO main - load /datadisk/rocketmq/store/config/subscriptionGroup.json OK
+2026-06-12 00:59:22 INFO main - load /datadisk/rocketmq/store/config/consumerFilter.json OK
+2026-06-12 00:59:23 INFO main - Try to start service thread:AllocateMappedFileService started:false lastThread:null
+2026-06-12 00:59:23 INFO main - Try to shutdown service thread:AllocateMappedFileService started:true lastThread:Thread[AllocateMappedFileService,5,main]
+2026-06-12 00:59:23 INFO main - shutdown thread AllocateMappedFileService interrupt true
+2026-06-12 00:59:23 INFO main - join thread AllocateMappedFileService elapsed time(ms) 0 90000
+2026-06-12 00:59:23 INFO main - Try to shutdown service thread:PullRequestHoldService started:false lastThread:null
+--- journalctl last 15 ---
+Jun 11 16:59:11 v6rocketmqbroker-a-0 systemd[1]: rocketmq-broker.service: Main process exited, code=exited, status=253/n/a
+Jun 11 16:59:11 v6rocketmqbroker-a-0 systemd[1]: rocketmq-broker.service: Failed with result 'exit-code'.
+Jun 11 16:59:11 v6rocketmqbroker-a-0 systemd[1]: rocketmq-broker.service: Consumed 4.437s CPU time.
+Jun 11 16:59:22 v6rocketmqbroker-a-0 systemd[1]: rocketmq-broker.service: Scheduled restart job, restart counter is at 55.
+Jun 11 16:59:22 v6rocketmqbroker-a-0 systemd[1]: Stopped Apache RocketMQ Broker (DLedger) 4.9.7.
+Jun 11 16:59:22 v6rocketmqbroker-a-0 systemd[1]: rocketmq-broker.service: Consumed 4.437s CPU time.
+Jun 11 16:59:22 v6rocketmqbroker-a-0 systemd[1]: Started Apache RocketMQ Broker (DLedger) 4.9.7.
+Jun 11 16:59:23 v6rocketmqbroker-a-0 start-broker.sh[8964]: WARNING: An illegal reflective access operation has occurred
+Jun 11 16:59:23 v6rocketmqbroker-a-0 start-broker.sh[8964]: WARNING: Illegal reflective access by org.apache.rocketmq.store.MappedFile (file:/opt/rocketmq-4.9.7/lib/rocketmq-store-4.9.7.jar) to method java.nio.DirectByteBuffer.attachment()
+Jun 11 16:59:23 v6rocketmqbroker-a-0 start-broker.sh[8964]: WARNING: Please consider reporting this to the maintainers of org.apache.rocketmq.store.MappedFile
+Jun 11 16:59:23 v6rocketmqbroker-a-0 start-broker.sh[8964]: WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+Jun 11 16:59:23 v6rocketmqbroker-a-0 start-broker.sh[8964]: WARNING: All illegal access operations will be denied in a future release
+Jun 11 16:59:23 v6rocketmqbroker-a-0 systemd[1]: rocketmq-broker.service: Main process exited, code=exited, status=253/n/a
+Jun 11 16:59:23 v6rocketmqbroker-a-0 systemd[1]: rocketmq-broker.service: Failed with result 'exit-code'.
+Jun 11 16:59:23 v6rocketmqbroker-a-0 systemd[1]: rocketmq-broker.service: Consumed 4.096s CPU time.
+
+[stderr]
+

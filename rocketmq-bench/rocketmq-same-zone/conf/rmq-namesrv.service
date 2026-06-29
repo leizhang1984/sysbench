@@ -1,0 +1,15 @@
+[Unit]
+Description=Apache RocketMQ NameServer 4.9.7
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/rocketmq-4.9.7/bin/start-namesrv.sh
+Restart=on-failure
+RestartSec=10
+User=root
+LimitNOFILE=655350
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,321 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.44.1.10279",
+      "templateHash": "7611430048852922603"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Azure region (inherited from resource group)."
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "azureadmin",
+      "metadata": {
+        "description": "Admin username for the VMs."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin password for the VMs."
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "rocketmqnew-vnet",
+      "metadata": {
+        "description": "Existing virtual network name."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "vm-subnet",
+      "metadata": {
+        "description": "Existing subnet name."
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_D4s_v6",
+      "metadata": {
+        "description": "VM size."
+      }
+    },
+    "imageReference": {
+      "type": "object",
+      "defaultValue": {
+        "publisher": "resf",
+        "offer": "rockylinux-x86_64",
+        "sku": "9-base",
+        "version": "9.6.20250531"
+      },
+      "metadata": {
+        "description": "Rocky Linux image (Gen2, Standard security type)."
+      }
+    },
+    "vnetCidr": {
+      "type": "string",
+      "defaultValue": "10.170.0.0/16",
+      "metadata": {
+        "description": "VNet address space allowed to reach broker ports."
+      }
+    }
+  },
+  "variables": {
+    "cloudInit": "I2Nsb3VkLWNvbmZpZw0KIyBCcm9rZXIgbm9kZXMgYXJlIGNvbmZpZ3VyZWQgcG9zdC1kZXBsb3kgdmlhIEF6dXJlIHJ1bi1jb21tYW5kIChwZXItbm9kZSBETGVkZ2VyDQojIHNlbGZJZC9wZWVycyBhbmQgZGF0YS1kaXNrIG1vdW50KS4gVGhpcyBjbG91ZC1pbml0IG9ubHkgcmVjb3JkcyBhIG1hcmtlciBzbyB0aGUNCiMgaW1hZ2UgYm9vdHMgY2xlYW5seTsgbm8gaW5saW5lIHByb3Zpc2lvbmluZyBpcyBwZXJmb3JtZWQgaGVyZS4NCndyaXRlX2ZpbGVzOg0KICAtIHBhdGg6IC9ldGMvcm9ja2V0bXEtYnJva2VyLXJvbGUNCiAgICBwZXJtaXNzaW9uczogJzA2NDQnDQogICAgY29udGVudDogfA0KICAgICAgcm9sZT1kbGVkZ2VyLWJyb2tlcg0K",
+    "brokers": [
+      {
+        "name": "v6rocketmqbroker-a-0",
+        "group": "broker-a",
+        "selfId": "n0",
+        "zone": "1",
+        "ip": "10.170.0.10"
+      },
+      {
+        "name": "v6rocketmqbroker-a-1",
+        "group": "broker-a",
+        "selfId": "n1",
+        "zone": "2",
+        "ip": "10.170.0.11"
+      },
+      {
+        "name": "v6rocketmqbroker-a-2",
+        "group": "broker-a",
+        "selfId": "n2",
+        "zone": "3",
+        "ip": "10.170.0.12"
+      },
+      {
+        "name": "v6rocketmqbroker-b-0",
+        "group": "broker-b",
+        "selfId": "n0",
+        "zone": "1",
+        "ip": "10.170.0.13"
+      },
+      {
+        "name": "v6rocketmqbroker-b-1",
+        "group": "broker-b",
+        "selfId": "n1",
+        "zone": "2",
+        "ip": "10.170.0.14"
+      },
+      {
+        "name": "v6rocketmqbroker-b-2",
+        "group": "broker-b",
+        "selfId": "n2",
+        "zone": "3",
+        "ip": "10.170.0.15"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2023-09-01",
+      "name": "rocketmq-broker-nsg",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-SSH",
+            "properties": {
+              "priority": 1000,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "Allow-Broker-Ports-VNet",
+            "properties": {
+              "priority": 1010,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRanges": [
+                "10909",
+                "10911",
+                "10912",
+                "40911"
+              ],
+              "sourceAddressPrefix": "[parameters('vnetCidr')]",
+              "destinationAddressPrefix": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "copy": {
+        "name": "publicIps",
+        "count": "[length(variables('brokers'))]"
+      },
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2023-09-01",
+      "name": "[format('{0}-pip', variables('brokers')[copyIndex()].name)]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "zones": [
+        "[variables('brokers')[copyIndex()].zone]"
+      ],
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "publicIPAddressVersion": "IPv4"
+      }
+    },
+    {
+      "copy": {
+        "name": "nics",
+        "count": "[length(variables('brokers'))]"
+      },
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2023-09-01",
+      "name": "[format('{0}-nic', variables('brokers')[copyIndex()].name)]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "enableAcceleratedNetworking": true,
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'rocketmq-broker-nsg')]"
+        },
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[variables('brokers')[copyIndex()].ip]",
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('vnetName'), parameters('subnetName')), '/')[0], split(format('{0}/{1}', parameters('vnetName'), parameters('subnetName')), '/')[1])]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-pip', variables('brokers')[copyIndex()].name))]"
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', 'rocketmq-broker-nsg')]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-pip', variables('brokers')[copyIndex()].name))]"
+      ]
+    },
+    {
+      "copy": {
+        "name": "dataDisks",
+        "count": "[length(variables('brokers'))]"
+      },
+      "type": "Microsoft.Compute/disks",
+      "apiVersion": "2023-04-02",
+      "name": "[format('{0}-datadisk', variables('brokers')[copyIndex()].name)]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "PremiumV2_LRS"
+      },
+      "zones": [
+        "[variables('brokers')[copyIndex()].zone]"
+      ],
+      "properties": {
+        "creationData": {
+          "createOption": "Empty"
+        },
+        "diskSizeGB": 100,
+        "diskIOPSReadWrite": 3000,
+        "diskMBpsReadWrite": 125
+      }
+    },
+    {
+      "copy": {
+        "name": "virtualMachines",
+        "count": "[length(variables('brokers'))]"
+      },
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2023-09-01",
+      "name": "[variables('brokers')[copyIndex()].name]",
+      "location": "[parameters('location')]",
+      "zones": [
+        "[variables('brokers')[copyIndex()].zone]"
+      ],
+      "plan": {
+        "name": "[parameters('imageReference').sku]",
+        "product": "[parameters('imageReference').offer]",
+        "publisher": "[parameters('imageReference').publisher]"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('brokers')[copyIndex()].name]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "customData": "[variables('cloudInit')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[parameters('imageReference')]",
+          "osDisk": {
+            "name": "[format('{0}-osdisk', variables('brokers')[copyIndex()].name)]",
+            "createOption": "FromImage",
+            "diskSizeGB": 30,
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS"
+            }
+          },
+          "dataDisks": [
+            {
+              "lun": 0,
+              "createOption": "Attach",
+              "managedDisk": {
+                "id": "[resourceId('Microsoft.Compute/disks', format('{0}-datadisk', variables('brokers')[copyIndex()].name))]"
+              }
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-nic', variables('brokers')[copyIndex()].name))]"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/disks', format('{0}-datadisk', variables('brokers')[copyIndex()].name))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-nic', variables('brokers')[copyIndex()].name))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "brokerNames": {
+      "type": "array",
+      "copy": {
+        "count": "[length(variables('brokers'))]",
+        "input": "[variables('brokers')[copyIndex()].name]"
+      }
+    },
+    "brokerIps": {
+      "type": "array",
+      "copy": {
+        "count": "[length(variables('brokers'))]",
+        "input": "[variables('brokers')[copyIndex()].ip]"
+      }
+    }
+  }
+}

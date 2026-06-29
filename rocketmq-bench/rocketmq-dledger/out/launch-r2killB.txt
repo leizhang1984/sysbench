@@ -1,0 +1,11 @@
+﻿Enable succeeded: 
+[stdout]
+PROBE launched runId=r2killB topic=ft2_kb threads=10 dur=240 rate=100 retries=2
+pid=12559
+--- first console lines ---
+PRODUCER started runId=r2killB retries=2 retryAnotherBroker=true
+[03:11:50.740] sec=1 ok=804 fail=0 okTotal=805 p50=1 p99=196 max=218 err=
+[03:11:51.741] sec=2 ok=1009 fail=0 okTotal=1813 p50=1 p99=2 max=2 err=
+
+[stderr]
+

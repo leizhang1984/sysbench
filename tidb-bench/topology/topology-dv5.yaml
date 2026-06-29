@@ -1,0 +1,66 @@
+# =============================================================================
+# TiUP 拓扑文件 - DSv5 集群 (CentOS 7.9)
+# 部署: tiup cluster deploy tidb-dsv5 v8.5.6 ./topology-dv5.yaml -u azureadmin -p
+#       tiup cluster start tidb-dsv5
+# 中控机: clientvm01 (10.142.0.51)
+# 拓扑: 3 x (TiDB+PD) + 3 x TiKV, 跨 3 可用区, 副本按 zone 打散
+# =============================================================================
+
+global:
+  user: "tidb"                 # TiUP 在各节点创建的运行用户 (部署时自动创建)
+  ssh_port: 22
+  deploy_dir: "/tidb/deploy"   # 落在 Premium SSD v2
+  data_dir: "/tidb/data"       # 落在 Premium SSD v2
+  arch: "amd64"
+  os: "linux"
+
+# 监控/容灾: 按 zone 维度打散 Region 副本, 实现跨 AZ 容灾
+# 日志: 各组件 log 显式写入 /tidb/log (Premium SSD v2)
+server_configs:
+  pd:
+    replication.location-labels: ["zone", "host"]
+    replication.max-replicas: 3
+    log.file.filename: "/tidb/log/pd.log"
+  tidb:
+    log.level: "info"
+    log.file.filename: "/tidb/log/tidb.log"
+    log.slow-query-file: "/tidb/log/tidb-slow.log"
+  tikv:
+    # block-cache 约为内存的 45% (D8s_v5 = 32GB -> ~14GB)
+    storage.block-cache.capacity: "14GB"
+    log.file.filename: "/tidb/log/tikv.log"
+
+# ---------- PD (与 TiDB 同机) ----------
+pd_servers:
+  - host: 10.142.0.11
+    name: "pd-1"
+  - host: 10.142.0.12
+    name: "pd-2"
+  - host: 10.142.0.13
+    name: "pd-3"
+
+# ---------- TiDB (与 PD 同机) ----------
+tidb_servers:
+  - host: 10.142.0.11
+  - host: 10.142.0.12
+  - host: 10.142.0.13
+
+# ---------- TiKV (按 zone 跨 AZ 打散) ----------
+tikv_servers:
+  - host: 10.142.0.21
+    config:
+      server.labels: { zone: "az1", host: "dv5tikv01" }
+  - host: 10.142.0.22
+    config:
+      server.labels: { zone: "az2", host: "dv5tikv02" }
+  - host: 10.142.0.23
+    config:
+      server.labels: { zone: "az3", host: "dv5tikv03" }
+
+# ---------- 监控 (部署在中控机 clientvm01) ----------
+monitoring_servers:
+  - host: 10.142.0.51
+grafana_servers:
+  - host: 10.142.0.51
+alertmanager_servers:
+  - host: 10.142.0.51

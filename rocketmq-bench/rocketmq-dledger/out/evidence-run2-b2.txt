@@ -1,0 +1,32 @@
+﻿Enable succeeded: 
+[stdout]
+R] term=9 ledgerBegin=0 ledgerEnd=1374671 committed=1374671 watermarks={}
+/datadisk/rocketmq/logs/broker.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=8 role=CANDIDATE currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=8 role=CANDIDATE currStoreRole=SLAVE cost=0
+/datadisk/rocketmq/logs/broker.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=9 role=CANDIDATE currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=9 role=CANDIDATE currStoreRole=SLAVE cost=0
+/datadisk/rocketmq/logs/broker.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=9 role=FOLLOWER currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Begin to change to slave brokerName=broker-b brokerId=3
+/datadisk/rocketmq/logs/broker.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Try to shutdown service thread:TransactionalMessageCheckService started:false lastThread:null
+/datadisk/rocketmq/logs/broker.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Finish to change to slave brokerName=broker-b brokerId=3
+/datadisk/rocketmq/logs/broker.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=9 role=FOLLOWER currStoreRole=SLAVE cost=0
+/datadisk/rocketmq/logs/remoting.log:2026-06-12 11:14:17 INFO voteInvokeExecutor-3 - createChannel: begin to connect remote host[10.170.0.13:40911] asynchronously
+/datadisk/rocketmq/logs/remoting.log:2026-06-12 11:14:17 INFO voteInvokeExecutor-4 - createChannel: begin to connect remote host[10.170.0.14:40911] asynchronously
+/datadisk/rocketmq/logs/remoting.log:2026-06-12 11:14:17 INFO voteInvokeExecutor-3 - createChannel: connect remote host[10.170.0.13:40911] success, AbstractBootstrap$PendingRegistrationPromise@45085fc4(success)
+/datadisk/rocketmq/logs/remoting.log:2026-06-12 11:14:17 WARN voteInvokeExecutor-4 - createChannel: connect remote host[10.170.0.14:40911] failed, AbstractBootstrap$PendingRegistrationPromise@2e65bfca(failure: io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: /10.170.0.14:40911)
+=== role-change summary (whole log, last 12) ===
+2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Finish to change to slave brokerName=broker-b brokerId=3
+2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=9 role=FOLLOWER currStoreRole=SLAVE cost=0
+2026-06-12 11:18:41 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=10 role=CANDIDATE currStoreRole=SLAVE cost=0
+2026-06-12 11:18:41 INFO DLegerRoleChangeHandler_1 - Finish to change to slave brokerName=broker-b brokerId=3
+2026-06-12 11:18:41 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=10 role=FOLLOWER currStoreRole=SLAVE cost=0
+2026-06-12 11:32:44 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=10 role=CANDIDATE currStoreRole=SLAVE cost=0
+2026-06-12 11:32:47 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=11 role=CANDIDATE currStoreRole=SLAVE cost=0
+2026-06-12 11:32:47 INFO DLegerRoleChangeHandler_1 - Finish to change to slave brokerName=broker-b brokerId=3
+2026-06-12 11:32:47 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=11 role=FOLLOWER currStoreRole=SLAVE cost=0
+2026-06-12 11:34:19 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=12 role=CANDIDATE currStoreRole=SLAVE cost=0
+2026-06-12 11:34:19 INFO DLegerRoleChangeHandler_1 - Finish to change to slave brokerName=broker-b brokerId=3
+2026-06-12 11:34:19 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=12 role=FOLLOWER currStoreRole=SLAVE cost=1
+
+[stderr]
+

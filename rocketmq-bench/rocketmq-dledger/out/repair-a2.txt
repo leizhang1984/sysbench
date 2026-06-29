@@ -1,0 +1,16 @@
+﻿Enable succeeded: 
+[stdout]
+host=10.170.0.12 self=n2
+before: 490M	/datadisk/rocketmq/store/dledger-n2
+active=active restarts=0
+jvmPid=16771
+--- broker.log tail ---
+2026-06-12 01:20:03 INFO brokerOutApi_thread_3 - register broker[3]to name server 10.170.0.5:9876 OK
+2026-06-12 01:20:07 INFO BrokerControllerScheduledThread1 - Update slave consumer offset from master, 10.170.0.11:10911
+2026-06-12 01:20:07 INFO BrokerControllerScheduledThread1 - Update slave delay offset from master, 10.170.0.11:10911
+2026-06-12 01:20:07 INFO BrokerControllerScheduledThread1 - Update slave Subscription Group from master, 10.170.0.11:10911
+2026-06-12 01:20:17 INFO BrokerControllerScheduledThread1 - Update slave consumer offset from master, 10.170.0.11:10911
+2026-06-12 01:20:17 INFO BrokerControllerScheduledThread1 - Update slave delay offset from master, 10.170.0.11:10911
+
+[stderr]
+

@@ -1,0 +1,29 @@
+﻿Enable succeeded: 
+[stdout]
+running=1 at=03:24:39.113Z
+=== CSV tail ===
+1781234664542,03:24:24.542,170,0,0,144947,56,0,0,0,MQClientException:24|RemotingTooMuchRequestException:32
+1781234665542,03:24:25.542,171,61,6,145008,62,2,2921,2921,MQClientException:26|RemotingTooMuchRequestException:36
+1781234666543,03:24:26.543,172,0,0,145008,62,0,0,0,MQClientException:26|RemotingTooMuchRequestException:36
+1781234667543,03:24:27.543,173,0,0,145008,62,0,0,0,MQClientException:26|RemotingTooMuchRequestException:36
+1781234668543,03:24:28.543,174,16,10,145024,72,1,80,80,MQClientException:35|RemotingTooMuchRequestException:37
+1781234669543,03:24:29.543,175,0,0,145024,72,0,0,0,MQClientException:35|RemotingTooMuchRequestException:37
+1781234670543,03:24:30.543,176,0,0,145024,72,0,0,0,MQClientException:35|RemotingTooMuchRequestException:37
+1781234671544,03:24:31.544,177,32,10,145056,82,2,17,17,MQClientException:38|RemotingTooMuchRequestException:44
+1781234672544,03:24:32.544,178,0,0,145056,82,0,0,0,MQClientException:38|RemotingTooMuchRequestException:44
+1781234673544,03:24:33.544,179,0,0,145056,82,0,0,0,MQClientException:38|RemotingTooMuchRequestException:44
+1781234674544,03:24:34.544,180,88,2,145144,84,1,2997,2997,MQClientException:38|RemotingTooMuchRequestException:46
+1781234675544,03:24:35.544,181,1007,0,146151,84,1,2,2,MQClientException:38|RemotingTooMuchRequestException:46
+1781234676545,03:24:36.545,182,1007,0,147160,84,1,2,2,MQClientException:38|RemotingTooMuchRequestException:46
+1781234677546,03:24:37.546,183,1009,0,148167,84,1,2,2,MQClientException:38|RemotingTooMuchRequestException:46
+1781234678546,03:24:38.546,184,1010,0,149177,84,1,2,2,MQClientException:38|RemotingTooMuchRequestException:46
+=== console tail ===
+03:24:34.465 [NettyClientSelector_1] INFO RocketmqRemoting - closeChannel: close the connection to remote address[10.170.0.11:10911] result: true
+[03:24:34.544] sec=180 ok=88 fail=2 okTotal=145144 p50=1 p99=2997 max=2997 err=MQClientException:38|RemotingTooMuchRequestException:46
+[03:24:35.544] sec=181 ok=1007 fail=0 okTotal=146151 p50=1 p99=2 max=2 err=MQClientException:38|RemotingTooMuchRequestException:46
+[03:24:36.545] sec=182 ok=1007 fail=0 okTotal=147160 p50=1 p99=2 max=2 err=MQClientException:38|RemotingTooMuchRequestException:46
+[03:24:37.546] sec=183 ok=1009 fail=0 okTotal=148167 p50=1 p99=2 max=2 err=MQClientException:38|RemotingTooMuchRequestException:46
+[03:24:38.546] sec=184 ok=1010 fail=0 okTotal=149177 p50=1 p99=2 max=2 err=MQClientException:38|RemotingTooMuchRequestException:46
+
+[stderr]
+

@@ -1,0 +1,8 @@
+﻿Enable succeeded: 
+[stdout]
+==== clusterList (BID 0 = leader) ====
+#Cluster Name     #Broker Name            #BID  #Addr                  #Version                #InTPS(LOAD)       #OutTPS(LOAD) #PCWait(ms) #Hour #SPACE
+==== brokerProcess on this host ====
+
+[stderr]
+

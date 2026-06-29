@@ -1,0 +1,280 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.44.1.10279",
+      "templateHash": "7438844205656906050"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Azure region (inherited from resource group)."
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "azureadmin",
+      "metadata": {
+        "description": "Admin username for the VMs."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin password for the VMs."
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "rocketmqnew-vnet",
+      "metadata": {
+        "description": "Existing virtual network name."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "vm-subnet",
+      "metadata": {
+        "description": "Existing subnet name."
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_D4s_v6",
+      "metadata": {
+        "description": "VM size."
+      }
+    },
+    "imageReference": {
+      "type": "object",
+      "defaultValue": {
+        "publisher": "resf",
+        "offer": "rockylinux-x86_64",
+        "sku": "9-base",
+        "version": "9.6.20250531"
+      },
+      "metadata": {
+        "description": "Rocky Linux image (Gen2, Standard security type)."
+      }
+    },
+    "vnetCidr": {
+      "type": "string",
+      "defaultValue": "10.170.0.0/16",
+      "metadata": {
+        "description": "VNet address space allowed to reach NameServer port 9876."
+      }
+    }
+  },
+  "variables": {
+    "cloudInit": "I2Nsb3VkLWNvbmZpZw0KcGFja2FnZV91cGdyYWRlOiBmYWxzZQ0Kd3JpdGVfZmlsZXM6DQogIC0gcGF0aDogL29wdC9zZXR1cC1kYXRhZGlzay5zaA0KICAgIHBlcm1pc3Npb25zOiAnMDc1NScNCiAgICBjb250ZW50OiB8DQogICAgICAjIS9iaW4vYmFzaA0KICAgICAgc2V0IC1ldW8gcGlwZWZhaWwNCiAgICAgIExPRz0vdmFyL2xvZy9yb2NrZXRtcS1zZXR1cC5sb2cNCiAgICAgIGV4ZWMgPj4iJExPRyIgMj4mMQ0KICAgICAgZWNobyAiPT09IFskKGRhdGUpXSBkYXRhIGRpc2sgc2V0dXAgc3RhcnQgPT09Ig0KICAgICAgRElTSz0vZGV2L2Rpc2svYXp1cmUvc2NzaTEvbHVuMA0KICAgICAgIyB3YWl0IGZvciB0aGUgZGF0YSBkaXNrIChMVU4wKSB0byBhcHBlYXINCiAgICAgIGZvciBpIGluICQoc2VxIDEgNjApOyBkbw0KICAgICAgICBpZiBbIC1lICIkRElTSyIgXTsgdGhlbiBicmVhazsgZmkNCiAgICAgICAgZWNobyAid2FpdGluZyBmb3IgZGF0YSBkaXNrICgkaSkuLi4iOyBzbGVlcCAzDQogICAgICBkb25lDQogICAgICBpZiBbICEgLWUgIiRESVNLIiBdOyB0aGVuDQogICAgICAgIGVjaG8gIkVSUk9SOiBkYXRhIGRpc2sgJERJU0sgbm90IGZvdW5kIjsgZXhpdCAxDQogICAgICBmaQ0KICAgICAgUEFSVD0iJHtESVNLfS1wYXJ0MSINCiAgICAgIGlmIFsgISAtZSAiJFBBUlQiIF07IHRoZW4NCiAgICAgICAgZWNobyAicGFydGl0aW9uaW5nICRESVNLIg0KICAgICAgICBwYXJ0ZWQgLXMgIiRESVNLIiBta2xhYmVsIGdwdA0KICAgICAgICBwYXJ0ZWQgLXMgIiRESVNLIiBta3BhcnQgcHJpbWFyeSB4ZnMgMCUgMTAwJQ0KICAgICAgICBzbGVlcCAzDQogICAgICAgIHBhcnRwcm9iZSAiJERJU0siIHx8IHRydWUNCiAgICAgICAgZm9yIGkgaW4gJChzZXEgMSAyMCk7IGRvIFsgLWUgIiRQQVJUIiBdICYmIGJyZWFrOyBzbGVlcCAyOyBkb25lDQogICAgICBmaQ0KICAgICAgIyBmb3JtYXQgb25seSBpZiBubyBmaWxlc3lzdGVtIHByZXNlbnQNCiAgICAgIGlmICEgYmxraWQgIiRQQVJUIiA+L2Rldi9udWxsIDI+JjE7IHRoZW4NCiAgICAgICAgZWNobyAiZm9ybWF0dGluZyAkUEFSVCBhcyB4ZnMiDQogICAgICAgIG1rZnMueGZzIC1mICIkUEFSVCINCiAgICAgIGZpDQogICAgICBta2RpciAtcCAvZGF0YWRpc2sNCiAgICAgIFVVSUQ9JChibGtpZCAtcyBVVUlEIC1vIHZhbHVlICIkUEFSVCIpDQogICAgICBlY2hvICJkYXRhIGRpc2sgVVVJRD0kVVVJRCINCiAgICAgIGlmICEgZ3JlcCAtcSAiJFVVSUQiIC9ldGMvZnN0YWI7IHRoZW4NCiAgICAgICAgZWNobyAiVVVJRD0kVVVJRCAvZGF0YWRpc2sgeGZzIGRlZmF1bHRzLG5vZmFpbCAwIDIiID4+IC9ldGMvZnN0YWINCiAgICAgIGZpDQogICAgICBtb3VudCAtYQ0KICAgICAgZWNobyAiPT09IGRhdGEgZGlzayBtb3VudGVkIGF0IC9kYXRhZGlzayA9PT0iDQogICAgICBkZiAtaCAvZGF0YWRpc2sNCiAgLSBwYXRoOiAvb3B0L2luc3RhbGwtcm9ja2V0bXEuc2gNCiAgICBwZXJtaXNzaW9uczogJzA3NTUnDQogICAgY29udGVudDogfA0KICAgICAgIyEvYmluL2Jhc2gNCiAgICAgIHNldCAtZXVvIHBpcGVmYWlsDQogICAgICBMT0c9L3Zhci9sb2cvcm9ja2V0bXEtc2V0dXAubG9nDQogICAgICBleGVjID4+IiRMT0ciIDI+JjENCiAgICAgIGVjaG8gIj09PSBbJChkYXRlKV0gcm9ja2V0bXEgaW5zdGFsbCBzdGFydCA9PT0iDQogICAgICBSTVFfVkVSU0lPTj00LjkuNw0KICAgICAgUk1RX0hPTUU9L29wdC9yb2NrZXRtcS0ke1JNUV9WRVJTSU9OfQ0KICAgICAgIyB1cGRhdGUgT1MgdG8gbGF0ZXN0IDkueCBhbmQgaW5zdGFsbCBkZXBlbmRlbmNpZXMNCiAgICAgIGRuZiAteSB1cGRhdGUNCiAgICAgIGRuZiAteSBpbnN0YWxsIGphdmEtMTEtb3Blbmpkay1oZWFkbGVzcyB3Z2V0IHVuemlwDQogICAgICAjIGRvd25sb2FkIFJvY2tldE1RIDQuOS43DQogICAgICBjZCAvb3B0DQogICAgICBpZiBbICEgLWQgIiRSTVFfSE9NRSIgXTsgdGhlbg0KICAgICAgICB3Z2V0IC1xIGh0dHBzOi8vYXJjaGl2ZS5hcGFjaGUub3JnL2Rpc3Qvcm9ja2V0bXEvJHtSTVFfVkVSU0lPTn0vcm9ja2V0bXEtYWxsLSR7Uk1RX1ZFUlNJT059LWJpbi1yZWxlYXNlLnppcCAtTyByb2NrZXRtcS56aXANCiAgICAgICAgdW56aXAgLXEgcm9ja2V0bXEuemlwDQogICAgICAgIG12IHJvY2tldG1xLWFsbC0ke1JNUV9WRVJTSU9OfS1iaW4tcmVsZWFzZSAiJFJNUV9IT01FIg0KICAgICAgICBybSAtZiByb2NrZXRtcS56aXANCiAgICAgIGZpDQogICAgICAjIGRhdGEvbG9nIGRpcmVjdG9yaWVzIG9uIHRoZSBtb3VudGVkIGRhdGEgZGlzaw0KICAgICAgbWtkaXIgLXAgL2RhdGFkaXNrL3JvY2tldG1xL25hbWVzcnYvbG9ncw0KICAgICAgbWtkaXIgLXAgL2RhdGFkaXNrL3JvY2tldG1xL25hbWVzcnYva3ZzdG9yZQ0KICAgICAgIyBuYW1lc3J2IHN0YXJ0IHdyYXBwZXIgKHJlc29sdmVzIEpBVkFfSE9NRSBkeW5hbWljYWxseSkNCiAgICAgIGNhdCA+ICR7Uk1RX0hPTUV9L2Jpbi9zdGFydC1uYW1lc2VydmVyLnNoIDw8J0VPUycNCiAgICAgICMhL2Jpbi9iYXNoDQogICAgICBleHBvcnQgSkFWQV9IT01FPSQoZGlybmFtZSAiJChkaXJuYW1lICIkKHJlYWRsaW5rIC1mICIkKGNvbW1hbmQgLXYgamF2YSkiKSIpIikNCiAgICAgIGV4cG9ydCBST0NLRVRNUV9IT01FPV9fUk1RX0hPTUVfXw0KICAgICAgZXhlYyAiJFJPQ0tFVE1RX0hPTUUvYmluL21xbmFtZXNydiIgLWMgIiRST0NLRVRNUV9IT01FL2NvbmYvbmFtZXNydi5wcm9wZXJ0aWVzIg0KICAgICAgRU9TDQogICAgICBzZWQgLWkgInN8X19STVFfSE9NRV9ffCR7Uk1RX0hPTUV9fGciICR7Uk1RX0hPTUV9L2Jpbi9zdGFydC1uYW1lc2VydmVyLnNoDQogICAgICBjaG1vZCAreCAke1JNUV9IT01FfS9iaW4vc3RhcnQtbmFtZXNlcnZlci5zaA0KICAgICAgIyBtaW5pbWFsIE5hbWVTZXJ2ZXIgY29uZmlnIChkZWZhdWx0czogbGlzdGVuUG9ydCA5ODc2KQ0KICAgICAgY2F0ID4gJHtSTVFfSE9NRX0vY29uZi9uYW1lc3J2LnByb3BlcnRpZXMgPDxFT1MNCiAgICAgIGxpc3RlblBvcnQ9OTg3Ng0KICAgICAga3ZDb25maWdQYXRoPS9kYXRhZGlzay9yb2NrZXRtcS9uYW1lc3J2L2t2c3RvcmUva3ZDb25maWcuanNvbg0KICAgICAgRU9TDQogICAgICAjIHJlZGlyZWN0IG5hbWVzcnYgbG9ncyB0byBkYXRhIGRpc2sNCiAgICAgIGlmIFsgLWYgJHtSTVFfSE9NRX0vY29uZi9sb2diYWNrX25hbWVzcnYueG1sIF07IHRoZW4NCiAgICAgICAgc2VkIC1pICdzfFwke3VzZXIuaG9tZX0vbG9ncy9yb2NrZXRtcWxvZ3N8L2RhdGFkaXNrL3JvY2tldG1xL25hbWVzcnYvbG9nc3xnJyAke1JNUV9IT01FfS9jb25mL2xvZ2JhY2tfbmFtZXNydi54bWwNCiAgICAgIGZpDQogICAgICAjIHN5c3RlbWQgc2VydmljZQ0KICAgICAgY2F0ID4gL2V0Yy9zeXN0ZW1kL3N5c3RlbS9yb2NrZXRtcS1uYW1lc2VydmVyLnNlcnZpY2UgPDxFT1MNCiAgICAgIFtVbml0XQ0KICAgICAgRGVzY3JpcHRpb249QXBhY2hlIFJvY2tldE1RIE5hbWVTZXJ2ZXIgJHtSTVFfVkVSU0lPTn0NCiAgICAgIEFmdGVyPW5ldHdvcmstb25saW5lLnRhcmdldA0KICAgICAgV2FudHM9bmV0d29yay1vbmxpbmUudGFyZ2V0DQoNCiAgICAgIFtTZXJ2aWNlXQ0KICAgICAgVHlwZT1zaW1wbGUNCiAgICAgIEV4ZWNTdGFydD0ke1JNUV9IT01FfS9iaW4vc3RhcnQtbmFtZXNlcnZlci5zaA0KICAgICAgUmVzdGFydD1vbi1mYWlsdXJlDQogICAgICBSZXN0YXJ0U2VjPTEwDQogICAgICBVc2VyPXJvb3QNCiAgICAgIExpbWl0Tk9GSUxFPTY1NTM1MA0KDQogICAgICBbSW5zdGFsbF0NCiAgICAgIFdhbnRlZEJ5PW11bHRpLXVzZXIudGFyZ2V0DQogICAgICBFT1MNCiAgICAgIHN5c3RlbWN0bCBkYWVtb24tcmVsb2FkDQogICAgICBzeXN0ZW1jdGwgZW5hYmxlIHJvY2tldG1xLW5hbWVzZXJ2ZXIuc2VydmljZQ0KICAgICAgc3lzdGVtY3RsIHN0YXJ0IHJvY2tldG1xLW5hbWVzZXJ2ZXIuc2VydmljZQ0KICAgICAgZWNobyAiPT09IHJvY2tldG1xIG5hbWVzZXJ2ZXIgaW5zdGFsbGVkIGFuZCBzdGFydGVkID09PSINCiAgICAgIHN5c3RlbWN0bCAtLW5vLXBhZ2VyIHN0YXR1cyByb2NrZXRtcS1uYW1lc2VydmVyLnNlcnZpY2UgfHwgdHJ1ZQ0KcnVuY21kOg0KICAtIFsgYmFzaCwgL29wdC9zZXR1cC1kYXRhZGlzay5zaCBdDQogIC0gWyBiYXNoLCAvb3B0L2luc3RhbGwtcm9ja2V0bXEuc2ggXQ0K",
+    "vms": [
+      {
+        "name": "v6rocketmqnameserver01",
+        "zone": "1"
+      },
+      {
+        "name": "v6rocketmqnameserver02",
+        "zone": "2"
+      },
+      {
+        "name": "v6rocketmqnameserver03",
+        "zone": "3"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2023-09-01",
+      "name": "rocketmq-ns-nsg",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-SSH",
+            "properties": {
+              "priority": 1000,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "Allow-NameServer-9876-VNet",
+            "properties": {
+              "priority": 1010,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "9876",
+              "sourceAddressPrefix": "[parameters('vnetCidr')]",
+              "destinationAddressPrefix": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "copy": {
+        "name": "publicIps",
+        "count": "[length(variables('vms'))]"
+      },
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2023-09-01",
+      "name": "[format('{0}-pip', variables('vms')[copyIndex()].name)]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "zones": [
+        "[variables('vms')[copyIndex()].zone]"
+      ],
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "publicIPAddressVersion": "IPv4"
+      }
+    },
+    {
+      "copy": {
+        "name": "nics",
+        "count": "[length(variables('vms'))]"
+      },
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2023-09-01",
+      "name": "[format('{0}-nic', variables('vms')[copyIndex()].name)]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "enableAcceleratedNetworking": true,
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'rocketmq-ns-nsg')]"
+        },
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('vnetName'), parameters('subnetName')), '/')[0], split(format('{0}/{1}', parameters('vnetName'), parameters('subnetName')), '/')[1])]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-pip', variables('vms')[copyIndex()].name))]"
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', 'rocketmq-ns-nsg')]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-pip', variables('vms')[copyIndex()].name))]"
+      ]
+    },
+    {
+      "copy": {
+        "name": "dataDisks",
+        "count": "[length(variables('vms'))]"
+      },
+      "type": "Microsoft.Compute/disks",
+      "apiVersion": "2023-04-02",
+      "name": "[format('{0}-datadisk', variables('vms')[copyIndex()].name)]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "PremiumV2_LRS"
+      },
+      "zones": [
+        "[variables('vms')[copyIndex()].zone]"
+      ],
+      "properties": {
+        "creationData": {
+          "createOption": "Empty"
+        },
+        "diskSizeGB": 100,
+        "diskIOPSReadWrite": 3000,
+        "diskMBpsReadWrite": 125
+      }
+    },
+    {
+      "copy": {
+        "name": "virtualMachines",
+        "count": "[length(variables('vms'))]"
+      },
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2023-09-01",
+      "name": "[variables('vms')[copyIndex()].name]",
+      "location": "[parameters('location')]",
+      "zones": [
+        "[variables('vms')[copyIndex()].zone]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('vms')[copyIndex()].name]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "customData": "[variables('cloudInit')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[parameters('imageReference')]",
+          "osDisk": {
+            "name": "[format('{0}-osdisk', variables('vms')[copyIndex()].name)]",
+            "createOption": "FromImage",
+            "diskSizeGB": 30,
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS"
+            }
+          },
+          "dataDisks": [
+            {
+              "lun": 0,
+              "createOption": "Attach",
+              "managedDisk": {
+                "id": "[resourceId('Microsoft.Compute/disks', format('{0}-datadisk', variables('vms')[copyIndex()].name))]"
+              }
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-nic', variables('vms')[copyIndex()].name))]"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/disks', format('{0}-datadisk', variables('vms')[copyIndex()].name))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-nic', variables('vms')[copyIndex()].name))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "vmNames": {
+      "type": "array",
+      "copy": {
+        "count": "[length(variables('vms'))]",
+        "input": "[variables('vms')[copyIndex()].name]"
+      }
+    },
+    "publicIpIds": {
+      "type": "array",
+      "copy": {
+        "count": "[length(variables('vms'))]",
+        "input": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-pip', variables('vms')[copyIndex()].name))]"
+      }
+    }
+  }
+}

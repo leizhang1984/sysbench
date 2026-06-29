@@ -1,0 +1,37 @@
+﻿Enable succeeded: 
+[stdout]
+host=10.170.0.12
+--- last role/election lines ---
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:52:49 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=7 role=FOLLOWER currStoreRole=SLAVE cost=1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:54:06 INFO main - preferredLeaderId=n1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:54:17 INFO main - preferredLeaderId=n1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:54:29 INFO main - preferredLeaderId=n1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:54:41 INFO main - preferredLeaderId=n1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:54:53 INFO main - preferredLeaderId=n1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:55:05 INFO main - preferredLeaderId=n1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:55:16 INFO main - preferredLeaderId=n1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:55:28 INFO main - preferredLeaderId=n1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:55:40 INFO main - preferredLeaderId=n1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:55:50 INFO main - preferredLeaderId=n1
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:55:51 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=7 role=CANDIDATE currStoreRole=ASYNC_MASTER
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:55:51 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=7 role=CANDIDATE currStoreRole=SLAVE cost=26
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:55:53 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=7 role=FOLLOWER currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-11 23:55:53 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=7 role=FOLLOWER currStoreRole=SLAVE cost=1
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:01:45 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=7 role=CANDIDATE currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:01:45 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=7 role=CANDIDATE currStoreRole=SLAVE cost=0
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:01:46 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=8 role=CANDIDATE currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:01:46 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=8 role=CANDIDATE currStoreRole=SLAVE cost=0
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:01:46 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=8 role=FOLLOWER currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:01:46 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=8 role=FOLLOWER currStoreRole=SLAVE cost=1
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:12:58 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=9 role=CANDIDATE currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:12:58 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=9 role=CANDIDATE currStoreRole=SLAVE cost=0
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:12:58 INFO DLegerRoleChangeHandler_1 - Begin handling broker role change term=9 role=FOLLOWER currStoreRole=SLAVE
+/datadisk/rocketmq/logs/broker.log:2026-06-12 00:12:58 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=9 role=FOLLOWER currStoreRole=SLAVE cost=0
+--- last broker.log mtime / tail ts ---
+-rw-r--r--. 1 root root 1259295 16:28:21 /datadisk/rocketmq/logs/broker.log
+2026-06-12 00:28:11 INFO BrokerControllerScheduledThread1 - Update slave delay offset from master, 10.170.0.11:10911
+2026-06-12 00:28:21 INFO BrokerControllerScheduledThread1 - Update slave consumer offset from master, 10.170.0.11:10911
+2026-06-12 00:28:21 INFO BrokerControllerScheduledThread1 - Update slave delay offset from master, 10.170.0.11:10911
+
+[stderr]
+

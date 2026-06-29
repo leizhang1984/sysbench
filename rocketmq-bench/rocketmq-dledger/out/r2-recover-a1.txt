@@ -1,0 +1,22 @@
+﻿Enable succeeded: 
+[stdout]
+self=n1 store=/datadisk/rocketmq/store host=10.170.0.11
+before:
+509M	/datadisk/rocketmq/store/dledger-n1
+22M	/datadisk/rocketmq/store/consumequeue
+63M	/datadisk/rocketmq/store/index
+wiped message store (kept config/, lock)
+total 8
+drwxr-xr-x. 3 root root   32 Jun 12 03:08 .
+drwxr-xr-x. 4 root root   31 Jun 11 11:36 ..
+drwxr-xr-x. 2 root root 4096 Jun 12 03:08 config
+-rw-r--r--. 1 root root    4 Jun 11 17:01 lock
+started; waiting 25s to sync...
+systemd=active
+pid=17233
+pid=17258
+=== store after sync ===
+517M	/datadisk/rocketmq/store/dledger-n1
+
+[stderr]
+

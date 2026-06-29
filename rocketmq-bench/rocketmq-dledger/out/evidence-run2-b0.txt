@@ -1,0 +1,35 @@
+﻿Enable succeeded: 
+[stdout]
+/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: FailoverTopic, queueId: 7
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_base, queueId: 0
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_base, queueId: 1
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_base, queueId: 2
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_base, queueId: 3
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_base, queueId: 4
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_base, queueId: 5
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_base, queueId: 6
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_base, queueId: 7
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_kill, queueId: 0
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_kill, queueId: 1
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_kill, queueId: 2
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_kill, queueId: 3
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_kill, queueId: 4
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_kill, queueId: 5
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_kill, queueId: 6
+/datadisk/rocketmq/logs/store.log:2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Compute logical min offset: 0, topic: ft_kill, queueId: 7
+=== role-change summary (whole log, last 12) ===
+2026-06-12 11:14:17 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=9 role=LEADER currStoreRole=SYNC_MASTER cost=18
+2026-06-12 11:18:41 INFO DLegerRoleChangeHandler_1 - Finish to change to slave brokerName=broker-b brokerId=1
+2026-06-12 11:18:41 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=10 role=CANDIDATE currStoreRole=SLAVE cost=101
+2026-06-12 11:18:41 INFO DLegerRoleChangeHandler_1 - Finish to change to slave brokerName=broker-b brokerId=1
+2026-06-12 11:18:41 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=10 role=FOLLOWER currStoreRole=SLAVE cost=0
+2026-06-12 11:32:44 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=10 role=CANDIDATE currStoreRole=SLAVE cost=0
+2026-06-12 11:32:48 INFO DLegerRoleChangeHandler_1 - Finish to change to master brokerName=broker-b
+2026-06-12 11:32:48 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=11 role=LEADER currStoreRole=SYNC_MASTER cost=603
+2026-06-12 11:34:19 INFO DLegerRoleChangeHandler_1 - Finish to change to slave brokerName=broker-b brokerId=1
+2026-06-12 11:34:19 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=12 role=CANDIDATE currStoreRole=SLAVE cost=54
+2026-06-12 11:34:19 INFO DLegerRoleChangeHandler_1 - Finish to change to slave brokerName=broker-b brokerId=1
+2026-06-12 11:34:19 INFO DLegerRoleChangeHandler_1 - Finish handling broker role change succ=true term=12 role=FOLLOWER currStoreRole=SLAVE cost=1
+
+[stderr]
+

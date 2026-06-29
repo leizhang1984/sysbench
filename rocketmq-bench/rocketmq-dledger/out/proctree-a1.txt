@@ -1,0 +1,14 @@
+﻿Enable succeeded: 
+[stdout]
+host=10.170.0.11
+--- all procs matching BrokerStartup ---
+  84416   84410 T    sh              sh /opt/rocketmq-4.9.7/bin/runbroker.sh org.apache.rocketmq.broker.BrokerStartup -c /opt/rocketmq-4.9.7/conf/broker-dledger.conf
+  84441   84416 Sl   java            /usr/lib/jvm/java-11-openjdk-11.0.25.0.9-7.el9.x86_64/bin/java -server -Xms8g -Xmx8g -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:G1ReservePercent=25 -XX:InitiatingHeapOccupancyPercent=30 -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:G1ReservePercent=25 -XX:InitiatingHeapOccupancyPercent=30 -XX:SoftRefLRUPolicyMSPerMB=0 -Xlog:gc*:file=/dev/shm/rmq_srv_gc_%p_%t.log:time,tags:filecount=5,filesize=30M -XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -XX:MaxDirectMemorySize=15g -XX:-UseLargePages -XX:-UseBiasedLocking -cp .:/opt/rocketmq-4.9.7/bin/../conf:/opt/rocketmq-4.9.7/bin/../lib/*: org.apache.rocketmq.broker.BrokerStartup -c /opt/rocketmq-4.9.7/conf/broker-dledger.conf
+--- pgrep -f BrokerStartup ---
+84416 sh /opt/rocketmq-4.9.7/bin/runbroker.sh org.apache.rocketmq.broker.BrokerStartup -c /opt/rocketmq-4.9.7/conf/broker-dledger.conf
+84441 /usr/lib/jvm/java-11-openjdk-11.0.25.0.9-7.el9.x86_64/bin/java -server -Xms8g -Xmx8g -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:G1ReservePercent=25 -XX:InitiatingHeapOccupancyPercent=30 -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:G1ReservePercent=25 -XX:InitiatingHeapOccupancyPercent=30 -XX:SoftRefLRUPolicyMSPerMB=0 -Xlog:gc*:file=/dev/shm/rmq_srv_gc_%p_%t.log:time,tags:filecount=5,filesize=30M -XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -XX:MaxDirectMemorySize=15g -XX:-UseLargePages -XX:-UseBiasedLocking -cp .:/opt/rocketmq-4.9.7/bin/../conf:/opt/rocketmq-4.9.7/bin/../lib/*: org.apache.rocketmq.broker.BrokerStartup -c /opt/rocketmq-4.9.7/conf/broker-dledger.conf
+--- pgrep java ---
+84441 /usr/lib/jvm/java-11-openjdk-11.0.25.0.9-7.el9.x86_64/bin/java -server -Xms8g -Xmx8g -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:G1ReservePercent=25 -XX:InitiatingHeapOccupancyPercent=30 -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:G1ReservePercent=25 -XX:InitiatingHeapOccupancyPercent=30 -XX:SoftRefLRUPolicyMSPerMB=0 -Xlog:gc*:file=/dev/shm/rmq_srv_gc_%p_%t.log:time,tags:filecount=5,filesize=30M -XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -XX:MaxDirectMemorySize=15g -XX:-UseLargePages -XX:-UseBiasedLocking -cp .:/opt/rocketmq-4.9.7/bin/../conf:/opt/rocketmq-4.9.7/bin/../lib/*: org.apache.rocketmq.broker.BrokerStartup -c /opt/rocketmq-4.9.7/conf/broker-dledger.conf
+
+[stderr]
+

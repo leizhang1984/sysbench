@@ -1,0 +1,9 @@
+#cloud-config
+# Broker nodes are configured post-deploy via Azure run-command (per-node DLedger
+# selfId/peers and data-disk mount). This cloud-init only records a marker so the
+# image boots cleanly; no inline provisioning is performed here.
+write_files:
+  - path: /etc/rocketmq-broker-role
+    permissions: '0644'
+    content: |
+      role=dledger-broker

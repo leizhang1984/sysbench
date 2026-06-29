@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+mkdir -p /home/azureadmin/.ssh
+chmod 700 /home/azureadmin/.ssh
+PUB=$(echo 'c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFDQVFDbUVNUEMxSlZ0S0NKZVdqbmtzd1VRWjJEbkNTbVhpejcwSStKSWdoUHY5eEhWK3JRTWxadnQvaHY5OXBKRFUrOG1RM2I0LzA1WHZ0MUROak9hdmR2T1ZUaEQvTWRkc2tGQlBXQU1hWGVpMkJWMzh0cGlsU1lVYllPUHEvSjdXQWVmdEFGcWo1QVFlQ2h2QWxtZ0ttclU4aTM5cHNUWDNVQ2xiRjl2bHhTMWZwelZWVVVOSUNsd3pxMTJSb0x4TUxQNjhCN3FnVkFlaDZNVGE0TGdtTlhDOW5qa2N4UXU1M0NSNEpVVGZ1WTVDWlpjNWp6MHBUR1RNL1RiZUZua1l4aEtqQ2dkSnlUUUEwb0tjc1duNVdBeFpUZk5hREpYbjloYXZLUDRmUVdKNnh1aS9nSDk2cyt6clJOTjYvRnREQlplZm9IS0xIZ3ZsSUdGaUVVcDNhY216bVlGc3lKUDh2aVpzWnRYRTNQTU5EdFVkSkp6dmNmak4vWS9nYlpuN3oxNkZLUWJwTTk5dWljVk96VWNOd1ZRMjVYeVB5ZVlubG5URVl2emNiNmoyUEZPMzZ1NGR3N0h4dERvZUcrUE5sRmwrcTRzOHNQRGF4TlQvS09VWEpGZjRVNk82SERZMmhXZHZDQVFjc1hNRDh6UlQ0ZitOcXJiekthU0JQbnRPendVL1RJc2RzRlQrTFRyenNhY0ErTFJhNlB5djRxcE12WU8yNGU1NkpCM0lMdDlMZnpBQnlESmdHdnNMOTZXUk1wMUJsd2V5MFhRbklYY2laYkJqWTNia2dzK3B5eGZsaW1MaU55WTAyS1IxVElzU096cUNqczAwWlZkWFBjUFdWZkhPaUlLblY3ZmRLODR3ZER6UU96Y3AzSXlKc3dWeHFuU3hnVzNmU0Y4cnc9PSByb290QGNsaWVudHZtMDI=' | base64 -d)
+touch /home/azureadmin/.ssh/authorized_keys
+grep -qF "$PUB" /home/azureadmin/.ssh/authorized_keys || echo "$PUB" >> /home/azureadmin/.ssh/authorized_keys
+chmod 600 /home/azureadmin/.ssh/authorized_keys
+chown -R azureadmin:azureadmin /home/azureadmin/.ssh
+command -v restorecon >/dev/null 2>&1 && restorecon -R /home/azureadmin/.ssh || true
+echo "OK fields=$(awk '{print NF}' /home/azureadmin/.ssh/authorized_keys | tail -1)"

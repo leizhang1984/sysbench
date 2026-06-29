@@ -1,0 +1,12 @@
+﻿Enable succeeded: 
+[stdout]
+EXIT_JAVAC=0
+=== class files ===
+-rw-r--r--. 1 root root 11784 Jun 11 13:35 /opt/probe/FailoverProbe.class
+-rw-r--r--. 1 root root  3739 Jun 12 03:00 /opt/probe/Probe$1.class
+-rw-r--r--. 1 root root  3946 Jun 12 03:00 /opt/probe/Probe$2.class
+-rw-r--r--. 1 root root  2341 Jun 12 03:00 /opt/probe/Probe$3.class
+-rw-r--r--. 1 root root  6795 Jun 12 03:00 /opt/probe/Probe.class
+
+[stderr]
+

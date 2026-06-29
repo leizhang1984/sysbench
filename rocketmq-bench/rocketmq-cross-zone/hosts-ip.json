@@ -1,0 +1,14 @@
+﻿{
+    "map":  {
+                "v6rocketmqnamesvr01":  "10.162.0.4",
+                "v6rocketmqnamesvr02":  "10.162.0.5",
+                "v6rocketmqbroker-a-0":  "10.162.0.7",
+                "v6rocketmqnamesvr03":  "10.162.0.6",
+                "v6rocketmqbroker-b-0":  "10.162.0.9",
+                "v6rocketmqbroker-b-1":  "10.162.0.10",
+                "v6rocketmqbroker-c-0":  "10.162.0.11",
+                "v6rocketmqbroker-c-1":  "10.162.0.12",
+                "v6rocketmqbroker-a-1":  "10.162.0.8"
+            },
+    "namesrvAddr":  "10.162.0.4:9876;10.162.0.5:9876;10.162.0.6:9876"
+}

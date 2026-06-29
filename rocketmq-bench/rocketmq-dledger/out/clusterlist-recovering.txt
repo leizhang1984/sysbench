@@ -1,0 +1,12 @@
+﻿Enable succeeded: 
+[stdout]
+==== clusterList (BID 0 = leader) ====
+#Cluster Name     #Broker Name            #BID  #Addr                  #Version                #InTPS(LOAD)       #OutTPS(LOAD) #PCWait(ms) #Hour #SPACE
+RocketMQCluster   broker-a                -1    10.170.0.11:10911      V4_9_7                   0.00(0,0ms)         0.00(0,0ms)          0 494777.07 0.0100
+RocketMQCluster   broker-b                -1    10.170.0.13:10911      V4_9_7                   0.00(0,0ms)         0.00(0,0ms)          0 494777.07 0.0100
+==== brokerProcess on this host ====
+10855
+10880
+
+[stderr]
+
