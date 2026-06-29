@@ -13,7 +13,7 @@ $NSG      = "rocketmqnew1-nsg"
 $VM_SIZE  = "Standard_D4s_v6"
 $IMAGE    = "resf:rockylinux-x86_64:9-base:latest"
 $ADMIN_USER = "azureadmin"
-$ADMIN_PASS = "Zhanglei@123456"
+$ADMIN_PASS = ""
 $DISK_SKU = "PremiumV2_LRS"
 $SSH_SRC  = "VirtualNetwork"   # restrict SSH to your mgmt CIDR if desired
 

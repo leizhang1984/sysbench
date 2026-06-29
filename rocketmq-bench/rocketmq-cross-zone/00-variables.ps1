@@ -16,7 +16,7 @@ $Global:VM_SIZE      = 'Standard_D4s_v6'
 # Rocky Linux 9 (latest) from the marketplace (publisher resf)
 $Global:IMAGE        = 'resf:rockylinux-x86_64:9-base:latest'
 $Global:ADMIN_USER   = 'azureadmin'
-$Global:ADMIN_PASS   = 'Zhanglei@123456'
+$Global:ADMIN_PASS   = ''
 
 # --- Data disk (Premium SSD v2) ------------------------------------------
 $Global:DISK_SKU     = 'PremiumV2_LRS'

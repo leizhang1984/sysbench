@@ -14,7 +14,7 @@ export VM_SIZE="Standard_D4s_v6"
 export IMAGE="resf:rockylinux-x86_64:9-base:latest"
 export ADMIN_USER="azureadmin"
 # NOTE: password is passed at runtime; do not commit real secrets to source control.
-export ADMIN_PASS="Zhanglei@123456"
+export ADMIN_PASS=""
 
 # Data disk (Premium SSD v2)
 export DISK_SKU="PremiumV2_LRS"

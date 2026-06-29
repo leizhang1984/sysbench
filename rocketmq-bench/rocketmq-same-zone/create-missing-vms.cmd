@@ -6,7 +6,7 @@ set RG=rocketmqnew1-rg
 set IMG=resf:rockylinux-x86_64:9-base:latest
 set SIZE=Standard_D4s_v6
 set USER=azureadmin
-set PASS=Zhanglei@123456
+set PASS=
 
 call az account set --subscription %SUB% >nul
 
