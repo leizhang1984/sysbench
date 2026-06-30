@@ -43,7 +43,7 @@ Write-Host "STEP 3: Add azureadmin user with password (VMAccess)"
 Write-Host "========================================"
 foreach ($v in $vms) {
   Write-Host "Setting azureadmin on $($v.name)..."
-  az vm user update -g $RG -n $v.name -u azureadmin -p "Zhanglei@123456" --output none
+  az vm user update -g $RG -n $v.name -u azureadmin -p "" --output none
   if ($LASTEXITCODE -eq 0) { Write-Host "  OK" } else { Write-Host "  FAILED" }
 }
 
