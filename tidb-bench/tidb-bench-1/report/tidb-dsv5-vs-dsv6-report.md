@@ -441,7 +441,7 @@ flowchart TB
 
 ---
 
-# 第三部分：TiDB 从 3 节点扩容到 6 节点（新增）
+# 第三部分：TiDB 从 3 节点扩容到 6 节点，db-ps-model=disable
 
 > 本部分新增于 2026-06-30。第二部分已确认本 OLTP 负载的瓶颈在 **TiDB（SQL 计算层）CPU**，并建议“优先扩 TiDB 计算资源”。本部分即针对该建议做验证：把 TiDB 节点从 **3 台扩容到 6 台**（PD、TiKV 仍各保持 3 台不变），观察扩容对同一 OLTP 负载的吞吐、延迟与各角色资源占用的影响。
 > - **3 节点基线（旧）**：3 × TiDB + 3 × PD + 3 × TiKV（即第二部分“拆分部署 DSv6”），接入 LB `10.142.0.60`
@@ -497,6 +497,7 @@ flowchart TB
 | 执行方式 | 各集群由各自客户端 **独立**压测 |
 
 > 数据规模、测试用例、并发梯度、时长与压测开关与第二部分完全一致，保证 3 节点与 6 节点结果可直接对比。
+> **压测开关说明**：第三部分全部正式压测均显式指定 `--db-ps-mode=disable`，并非使用 sysbench 默认值。
 
 ### 11.4 指标采集
 
@@ -726,3 +727,284 @@ flowchart TB
 - 压测/采集脚本：`scripts/40-prepare-data.sh`、`scripts/41-run-bench.sh`、`scripts/44-export-metrics.sh`
 - 图表生成脚本：`report/_tmp_make_scale_chart.py`（输出 `report/images/scale_3node_vs_6node_qps.png`）
 - 3 节点基线数据引用自本报告第二部分“拆分部署 DSv6”结果
+
+# 第四部分：TiDB 6节点 ，db-ps-model=auto
+
+> 本部分新增于 2026-07-01。第三部分已在同一套 6 节点集群上使用 **`--db-ps-mode=disable`** 形成基线结果；本部分保持 **同一集群、同一数据规模、同一并发梯度、同一监控口径** 不变，仅将客户端切换为 **`--db-ps-mode=auto`**，用于观察 Prepared Statement + 执行计划缓存路径对 6 节点 TiDB 集群的性能影响。
+> - **disable 基线（旧）**：沿用第三部分中 6 节点扩容后的正式结果，接入 LB `10.143.0.10`
+> - **auto 优化（新）**：在同一 6 节点集群上重新执行压测，接入同一 LB `10.143.0.10`
+>
+> **对比口径说明**：
+> - 本部分对比的是 **同一套 6 节点集群** 在两种客户端模式下的差异：A=`--db-ps-mode=disable`，B=`--db-ps-mode=auto`。
+> - auto 轮次在正式测试前新增了 **60 秒 `oltp_read_write` 预热**（结果丢弃），用于预热 TiKV block-cache；第三部分原始 disable 基线未显式包含这一预热步骤。因此低并发只读与部分磁盘 IO 指标可能存在轻微“热缓存正偏”。若需要绝对严格的 apples-to-apples 口径，后续可补跑一次带同等预热的 disable 基线。
+> - 两轮测试均采集 CPU / 网络 PPS / 数据盘 IO（读写吞吐、读写 IOPS），因此本部分可直接对比 SQL 层优化对存储与 CPU 路径的传导效果。
+
+## 16. 测试环境说明（disable vs auto）
+
+本轮沿用第三部分中的同一套 6 节点 DSv6 集群，不再改变 TiDB / PD / TiKV 节点规模，仅切换 sysbench 客户端的 prepared statement 模式，评估在 6 节点 TiDB 计算层上启用 Prepared Statement + Plan Cache 路径后，对吞吐、延迟以及主机指标的影响。
+
+### 16.1 集群规格
+
+| 项目 | disable 基线（旧） | auto 优化（新） |
+|---|---|---|
+| 部署架构 | 6 × TiDB + 3 × PD + 3 × TiKV | 6 × TiDB + 3 × PD + 3 × TiKV |
+| TiDB / PD / TiKV 节点数 | 6 / 3 / 3 | 6 / 3 / 3 |
+| 数据库节点 VM 系列 | Standard_D8s_v6 | Standard_D8s_v6 |
+| 单节点 vCPU / 内存 | 8 vCPU / 32 GB | 8 vCPU / 32 GB |
+| 节点总数 | 12 | 12 |
+| 压测客户端 | clientvm01（Standard_D32s_v6） | clientvm01（Standard_D32s_v6） |
+| 操作系统 | Rocky Linux 9.8 | Rocky Linux 9.8 |
+| TiDB 版本 | v8.5.6 | v8.5.6 |
+| 数据盘 | Premium SSD v2，200 GB / 3000 IOPS / 125 MB/s | Premium SSD v2，200 GB / 3000 IOPS / 125 MB/s |
+| 数据目录 | `/tidb`（独立数据盘） | `/tidb`（独立数据盘） |
+| 接入入口 | 内网 Standard LB `10.143.0.10:4000` | 内网 Standard LB `10.143.0.10:4000` |
+| Prepared statement | `--db-ps-mode=disable` | `--db-ps-mode=auto` |
+| 预热策略 | 无显式预热（沿用第三部分原始口径） | 正式测试前先跑 60 秒 `oltp_read_write`，结果丢弃 |
+
+> 两轮测试唯一主变量为 **sysbench 的 `db-ps-mode`**；集群拓扑、节点规格、LB、TiDB 版本、数据规模和并发梯度均保持一致。
+
+### 16.2 网络与拓扑参数
+
+- VNet：`10.143.0.0/16`
+- TiDB：`10.143.0.31~.36`（6 台）
+- PD：`10.143.0.41/.42/.43`
+- TiKV：`10.143.0.51/.52/.53`
+- TiKV 按 zone 跨 3 个可用区打散，副本策略 `max-replicas=3`，按 `zone/host` 标签打散
+- TiKV `block-cache.capacity` 约为 32 GB 内存的 45%（约 14 GB）
+- 两轮测试均经同一内网 Standard LB `10.143.0.10:4000` 接入，LB 后端挂 6 个 TiDB:4000
+
+### 16.3 压测参数
+
+| 参数 | 取值 |
+|---|---|
+| 数据规模 | 32 张表 × 100 万行（每表） |
+| 测试用例 | `oltp_read_only`、`oltp_read_write` |
+| 并发线程 | 50 / 100 / 200 |
+| 每组时长 | 300 秒（report-interval=30s） |
+| 随机分布 | uniform |
+| 对照模式 | A=`--db-ps-mode=disable`（第三部分基线），B=`--db-ps-mode=auto`（本轮） |
+| 预热策略 | B 组正式测试前先跑 60 秒 `oltp_read_write`，结果丢弃 |
+| 执行方式 | 两轮均由 clientvm01 **独立**压测 |
+
+> 除 `db-ps-mode` 与预热策略外，其余参数与第三部分完全一致。本部分重点观察 SQL 解析/执行计划缓存路径变化，能否在 6 节点 TiDB 计算层上转化为实际吞吐收益。
+
+### 16.4 指标采集
+
+两轮测试均通过 clientvm01（`10.143.0.20`）上的 Prometheus / Grafana 统一采集 12 个数据库节点的 node_exporter（`:9100`）。每组压测按精确起止时间窗口计算区间平均，并按 TiDB（6 节点均值）/ PD（3 节点均值）/ TiKV（3 节点均值）分组汇总。
+
+> 采集指标与第三部分一致：CPU idle% / CPU 利用% / softirq% / RX PPS / TX PPS，以及数据盘 `nvme0n2` 的读吞吐量、写吞吐量、读 IOPS、写 IOPS。这样既能观察 TiDB 计算层 CPU 变化，也能验证优化是否把压力继续向 TiKV / 存储层传导。
+
+## 17. 部署架构（disable vs auto）
+
+```mermaid
+flowchart TB
+    subgraph CLIENT[压测客户端 clientvm01]
+        C1[clientvm01<br/>D32s_v6<br/>10.143.0.20<br/>Prometheus+Grafana]
+        A[基线 A<br/>--db-ps-mode=disable]
+        B[优化 B<br/>--db-ps-mode=auto<br/>RW 60s 预热后正式压测]
+    end
+
+    subgraph N6[同一套 6 节点 TiDB 集群]
+        LB6[内网 LB<br/>10.143.0.10:4000]
+        T6_A[TiDB 10.143.0.31]
+        T6_B[TiDB 10.143.0.32]
+        T6_C[TiDB 10.143.0.33]
+        T6_D[TiDB 10.143.0.34]
+        T6_E[TiDB 10.143.0.35]
+        T6_F[TiDB 10.143.0.36]
+        P6_A[PD 10.143.0.41]
+        P6_B[PD 10.143.0.42]
+        P6_C[PD 10.143.0.43]
+        K6_A[TiKV az1 10.143.0.51]
+        K6_B[TiKV az2 10.143.0.52]
+        K6_C[TiKV az3 10.143.0.53]
+        LB6 --> T6_A & T6_B & T6_C & T6_D & T6_E & T6_F
+        T6_A & T6_B & T6_C & T6_D & T6_E & T6_F --- P6_A & P6_B & P6_C
+        T6_A & T6_B & T6_C & T6_D & T6_E & T6_F --- K6_A & K6_B & K6_C
+    end
+
+    A -->|sysbench| LB6
+    B -->|sysbench| LB6
+    C1 -.监控采集.-> T6_A & T6_B & T6_C & T6_D & T6_E & T6_F
+    C1 -.监控采集.-> P6_A & P6_B & P6_C
+    C1 -.监控采集.-> K6_A & K6_B & K6_C
+```
+
+- 两轮测试均命中同一套 6 节点 TiDB 集群，仅客户端 prepared statement 模式不同
+- auto 轮次在正式采样前增加 60 秒 `oltp_read_write` 预热，以减少冷缓存干扰
+- 存储层（3 台 TiKV）与调度层（3 台 PD）规模完全不变，因此若收益无法继续放大，可更清晰地观察瓶颈是否仍停留在 TiDB 或转向 TiKV
+
+## 18. sysbench 测试结果（disable vs auto）
+
+> 变化% 均以 **disable 基线** 为基线：QPS 变化% =（auto − disable）/ disable × 100；延迟变化% =（auto − disable）/ disable × 100（负值代表 auto 更优）。
+
+### 18.1 oltp_read_only（只读）
+
+| 并发 | disable QPS | auto QPS | QPS 变化 | disable avg(ms) | auto avg(ms) | avg 延迟变化 | disable p95(ms) | auto p95(ms) | p95 变化 |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 50  | 51849.56  | 54137.72  | **+4.41%**  | 15.43 | 14.78 | **-4.21%**  | 20.00 | 20.37 | +1.85% |
+| 100 | 95228.35  | 107356.42 | **+12.74%** | 16.80 | 14.90 | **-11.31%** | 21.89 | 19.65 | **-10.23%** |
+| 200 | 135691.47 | 163839.15 | **+20.74%** | 23.58 | 19.53 | **-17.18%** | 30.81 | 26.20 | **-14.96%** |
+
+### 18.2 oltp_read_write（读写混合）
+
+| 并发 | disable QPS | auto QPS | QPS 变化 | disable avg(ms) | auto avg(ms) | avg 延迟变化 | disable p95(ms) | auto p95(ms) | p95 变化 |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 50  | 40883.70 | 39101.02 | -4.36% | 24.46 | 25.57 | +4.54% | 31.37 | 31.94 | +1.82% |
+| 100 | 60612.83 | 63353.44 | **+4.52%** | 32.99 | 31.57 | **-4.30%** | 45.79 | 43.39 | **-5.24%** |
+| 200 | 78437.49 | 77829.75 | -0.78% | 50.99 | 51.38 | +0.76% | 80.03 | 81.48 | +1.81% |
+
+**图：TiDB 6 节点 disable vs auto QPS 对比**
+
+![TiDB 6-node disable vs auto QPS](images/ps_disable_vs_auto_qps.png)
+
+## 19. 主机系统指标（disable vs auto）
+
+下列数据为各组压测时间窗内，按角色分组的节点均值（TiDB 取 6 节点均值；TiKV 取 3 节点均值）。
+
+### 19.1 oltp_read_only — TiDB 节点
+
+| 并发 | 模式 | CPU idle% | CPU 利用% | softirq% | RX PPS | TX PPS |
+|---:|---|---:|---:|---:|---:|---:|
+| 50  | disable | 61.15 | 38.85 | 1.93 | 46726  | 33824 |
+| 50  | auto    | 62.11 | 37.89 | 2.27 | 56744  | 40939 |
+| 100 | disable | 30.17 | 69.83 | 3.40 | 91677  | 66118 |
+| 100 | auto    | 38.44 | 61.56 | 3.54 | 103545 | 74350 |
+| 200 | disable | 10.37 | 89.63 | 4.05 | 133059 | 91910 |
+| 200 | auto    | 15.88 | 84.13 | 4.64 | 162520 | 112914 |
+
+> 只读场景下，auto 在相同并发下带来更高 QPS，但 **TiDB 单台 CPU 利用率反而更低**（100/200 并发分别从 69.83% 降到 61.56%、89.63% 降到 84.13%）。这说明 auto 确实降低了 SQL 解析/执行计划相关开销，使每单位 CPU 可以处理更多查询。
+
+### 19.2 oltp_read_only — TiKV 节点（均为 3 节点均值）
+
+| 并发 | 模式 | CPU idle% | CPU 利用% | softirq% | RX PPS | TX PPS |
+|---:|---|---:|---:|---:|---:|---:|
+| 50  | disable | 70.94 | 29.06 | 1.69 | 34044 | 26449 |
+| 50  | auto    | 61.76 | 38.24 | 2.20 | 44260 | 35495 |
+| 100 | disable | 47.72 | 52.28 | 3.06 | 66267 | 50935 |
+| 100 | auto    | 42.08 | 57.92 | 3.38 | 75036 | 57651 |
+| 200 | disable | 29.55 | 70.45 | 4.04 | 91900 | 76526 |
+| 200 | auto    | 21.44 | 78.56 | 4.48 | 113858 | 93953 |
+
+> auto 让 TiDB 打出更高只读吞吐后，**TiKV 侧 CPU 与 PPS 明显上升**。尤其 200 并发只读下，TiKV CPU 从 70.45% 升至 78.56%，说明 auto 释放出的 TiDB 余量已被成功传导到 TiKV 层。
+
+### 19.3 oltp_read_write — TiDB 节点
+
+| 并发 | 模式 | CPU idle% | CPU 利用% | softirq% | RX PPS | TX PPS |
+|---:|---|---:|---:|---:|---:|---:|
+| 50  | disable | 54.65 | 45.35 | 2.30 | 57242 | 44531 |
+| 50  | auto    | 61.18 | 38.83 | 2.23 | 57603 | 44304 |
+| 100 | disable | 46.12 | 53.88 | 2.78 | 67760 | 55214 |
+| 100 | auto    | 50.52 | 49.48 | 2.77 | 70013 | 56604 |
+| 200 | disable | 33.52 | 66.48 | 3.25 | 83757 | 69909 |
+| 200 | auto    | 40.78 | 59.22 | 3.16 | 82867 | 68541 |
+
+> 读写场景下，auto 同样降低了 TiDB CPU 利用率，但收益没有只读那样直接转化为 QPS 提升，说明此时瓶颈已不主要停留在 TiDB 计算层。
+
+### 19.4 oltp_read_write — TiKV 节点（均为 3 节点均值）
+
+| 并发 | 模式 | CPU idle% | CPU 利用% | softirq% | RX PPS | TX PPS |
+|---:|---|---:|---:|---:|---:|---:|
+| 50  | disable | 29.18 | 70.82 | 3.38 | 72642 | 65661 |
+| 50  | auto    | 30.87 | 69.13 | 3.26 | 70225 | 63128 |
+| 100 | disable | 16.63 | 83.37 | 3.60 | 88418 | 76486 |
+| 100 | auto    | 17.44 | 82.56 | 3.56 | 86691 | 74438 |
+| 200 | disable | 9.72  | 90.28 | 3.70 | 100446 | 78107 |
+| 200 | auto    | 10.00 | 90.00 | 3.55 | 95662 | 73356 |
+
+> 在读写 100/200 并发下，两种模式的 **TiKV CPU 都稳定在 82% ~ 90% 高位**，说明 mixed workload 的核心瓶颈仍在 TiKV 侧。auto 虽然降低了 TiDB CPU，但无法显著改变 TiKV 已接近打满的事实，因此读写 QPS 提升有限且不稳定。
+
+### 19.5 数据盘 IO 指标（disable vs auto，6 节点集群）
+
+下表给出两种模式下 TiKV 数据盘（`nvme0n2` → `/tidb`）在压测窗口内的均值；其后附 auto 轮次的逐节点明细。TiDB / PD 节点几乎无数据盘 IO（仅系统/日志级别），故重点观察 TiKV。
+
+**TiKV 节点数据盘 IO（3 节点均值，便于总览）**
+
+| 测试 | 并发 | 模式 | 读吞吐(MB/s) | 写吞吐(MB/s) | 读 IOPS | 写 IOPS |
+|---|---:|---|---:|---:|---:|---:|
+| oltp_read_only  | 50  | disable | 0.01 | 1.73  | 0.03  | 8.78    |
+| oltp_read_only  | 50  | auto    | 0.12 | 3.17  | 30.82 | 161.72  |
+| oltp_read_only  | 100 | disable | 0.00 | 0.73  | 0.00  | 4.47    |
+| oltp_read_only  | 100 | auto    | 0.00 | 0.00  | 0.00  | 0.38    |
+| oltp_read_only  | 200 | disable | 0.00 | 0.01  | 0.00  | 1.61    |
+| oltp_read_only  | 200 | auto    | 0.00 | 0.00  | 0.00  | 0.40    |
+| oltp_read_write | 50  | disable | 0.00 | 21.03 | 0.00  | 1962.16 |
+| oltp_read_write | 50  | auto    | 1.31 | 19.49 | 335.22| 1465.06 |
+| oltp_read_write | 100 | disable | 0.00 | 39.20 | 0.00  | 2207.40 |
+| oltp_read_write | 100 | auto    | 2.84 | 33.77 | 606.37| 1328.81 |
+| oltp_read_write | 200 | disable | 0.69 | 51.30 | 142.80| 1955.86 |
+| oltp_read_write | 200 | auto    | 3.22 | 65.18 | 629.61| 1320.48 |
+
+**TiKV 各节点数据盘 IO（auto，逐台明细）**
+
+| 测试 | 并发 | TiKV 节点 | VM 名称 | 读吞吐(MB/s) | 写吞吐(MB/s) | 读 IOPS | 写 IOPS |
+|---|---:|---|---|---:|---:|---:|---:|
+| oltp_read_only  | 50  | 10.143.0.51 | tikvvm01 | 0.14 | 2.76  | 35.27  | 132.86  |
+| oltp_read_only  | 50  | 10.143.0.52 | tikvvm02 | 0.22 | 3.93  | 57.18  | 168.12  |
+| oltp_read_only  | 50  | 10.143.0.53 | tikvvm03 | 0.00 | 2.81  | 0.00   | 184.18  |
+| oltp_read_only  | 100 | 10.143.0.51 | tikvvm01 | 0.00 | 0.00  | 0.00   | 0.35    |
+| oltp_read_only  | 100 | 10.143.0.52 | tikvvm02 | 0.00 | 0.00  | 0.01   | 0.38    |
+| oltp_read_only  | 100 | 10.143.0.53 | tikvvm03 | 0.00 | 0.00  | 0.00   | 0.40    |
+| oltp_read_only  | 200 | 10.143.0.51 | tikvvm01 | 0.00 | 0.00  | 0.00   | 0.33    |
+| oltp_read_only  | 200 | 10.143.0.52 | tikvvm02 | 0.00 | 0.00  | 0.01   | 0.52    |
+| oltp_read_only  | 200 | 10.143.0.53 | tikvvm03 | 0.00 | 0.00  | 0.00   | 0.35    |
+| oltp_read_write | 50  | 10.143.0.51 | tikvvm01 | 1.90 | 19.45 | 485.85 | 1238.24 |
+| oltp_read_write | 50  | 10.143.0.52 | tikvvm02 | 1.94 | 17.89 | 496.34 | 1189.66 |
+| oltp_read_write | 50  | 10.143.0.53 | tikvvm03 | 0.09 | 21.14 | 23.47  | 1967.29 |
+| oltp_read_write | 100 | 10.143.0.51 | tikvvm01 | 3.34 | 32.51 | 675.70 | 1290.77 |
+| oltp_read_write | 100 | 10.143.0.52 | tikvvm02 | 3.41 | 35.88 | 687.66 | 1318.15 |
+| oltp_read_write | 100 | 10.143.0.53 | tikvvm03 | 1.78 | 32.91 | 455.76 | 1377.52 |
+| oltp_read_write | 200 | 10.143.0.51 | tikvvm01 | 3.45 | 62.89 | 669.13 | 1350.92 |
+| oltp_read_write | 200 | 10.143.0.52 | tikvvm02 | 4.24 | 61.58 | 746.43 | 1356.67 |
+| oltp_read_write | 200 | 10.143.0.53 | tikvvm03 | 1.96 | 71.06 | 473.26 | 1253.85 |
+
+**TiDB / PD 节点数据盘 IO（参考，均值）**
+
+| 角色 | disable 典型读吞吐 | auto 典型读吞吐 | disable 典型写吞吐 | auto 典型写吞吐 | disable 典型写 IOPS | auto 典型写 IOPS |
+|---|---:|---:|---:|---:|---:|---:|
+| TiDB（6 节点） | ≈ 0 | ≈ 0 | ≈ 0 | ≈ 0 | < 0.2 | < 0.2 |
+| PD（3 节点）  | ≈ 0 | ≈ 0 | ≤ 0.02 MB/s | ≤ 0.02 MB/s | 3 ~ 5 | 5 左右 |
+
+> 说明：
+> - auto 在 **只读 50 并发** 下出现较第三部分更高的少量读写 IO，主要与本轮新增的 60 秒预热及其后的 residual compaction / flush 有关，不代表只读路径突然转为“依赖磁盘”。
+> - 在读写场景中，auto 的 **TiKV 写 IOPS 明显低于 disable**（约 1962/2207/1956 → 1465/1329/1320），但读 IOPS 与读吞吐有所增加，说明压力分布发生了变化。
+> - TiDB、PD 数据盘 IO 依旧可以忽略。
+
+### 19.6 存储瓶颈专项分析
+
+**结论：在 `--db-ps-mode=auto` 下，存储仍未成为瓶颈，且 TiKV 写 IOPS 压力较第三部分基线明显下降；mixed workload 的核心瓶颈依旧是 TiKV CPU。**
+
+每台 TiKV 数据盘配额仍为 **3000 IOPS / 125 MB/s**（Premium SSD v2）。将 auto 实测峰值与配额对比：
+
+| 维度 | auto 实测峰值（TiKV） | 出现场景 | 占配额比例 |
+|---|---:|---|---:|
+| 写 IOPS | **≈ 1465** | oltp_read_write / 50 并发 | **≈ 48.8%**（1465 / 3000） |
+| 写吞吐 | ≈ 65.18 MB/s | oltp_read_write / 200 并发 | ≈ 52.1%（65.18 / 125） |
+| 读 IOPS | ≈ 629.61 | oltp_read_write / 200 并发 | ≈ 21.0% |
+| 读吞吐 | ≈ 3.22 MB/s | oltp_read_write / 200 并发 | ≈ 2.6% |
+
+**分析：**
+
+1. **auto 显著降低了写 IOPS 压力**：与第三部分 disable 基线相比，读写 100/200 并发下 TiKV 写 IOPS 从约 **2207 / 1956** 降至 **1329 / 1320**，距离 3000 上限更远，说明 auto 并未把瓶颈推向“磁盘 IOPS 打满”。
+2. **磁盘依旧不是第一瓶颈**：读写 200 并发下，auto 的 TiKV **CPU 利用率仍达 90.00%**（见 19.4），而写 IOPS 只占配额约 44%、写吞吐约 52%。因此瓶颈顺序仍是 **TiKV CPU ＞ 存储写吞吐/写 IOPS ＞ 其它**。
+3. **只读收益主要来自 TiDB 计算层，而非存储层**：只读场景在 auto 下 QPS 明显提升，但磁盘读写仍整体接近 0（除 50 并发 warmup 残留影响外），说明收益主要来自 SQL 层解析/计划缓存路径优化，而不是数据落盘模式变化。
+4. **若后续要继续优化读写混合负载**：单纯切换到 auto 已不足以突破 mixed workload 的天花板，仍需优先考虑 **扩 TiKV 节点数** 或进一步减轻 TiKV CPU 压力。
+
+## 20. 本轮结论（TiDB 6 节点 disable vs auto）
+
+1. **auto 对只读负载收益明确且稳定**：QPS 提升 **+4.41% / +12.74% / +20.74%**（50 / 100 / 200 并发），同时平均延迟下降 4.2% ~ 17.2%、p95 在中高并发下降 10% ~ 15%。这说明在 6 节点 TiDB 计算层上，Prepared Statement + Plan Cache 路径能够切实减少 SQL 层 CPU 开销。
+2. **读写混合负载收益有限且不稳定**：QPS 变化为 **-4.36% / +4.52% / -0.78%**。根因不是 auto 无效，而是 **mixed workload 的主瓶颈已停留在 TiKV**：即便 TiDB CPU 在 auto 下进一步下降，读写 200 并发时 TiKV CPU 仍约 90% 打满，导致 SQL 层优化难以等比例转化为吞吐。
+3. **系统指标与性能结果相互印证**：只读场景下 auto 让 TiDB CPU 利用率下降、TiKV CPU/PPS 上升，说明 TiDB 被释放出的算力成功传导到存储层；而读写场景下 TiDB CPU 虽下降，但 TiKV CPU 基本不动，故整体收益受限。
+4. **存储仍非当前首要瓶颈，且 auto 让写 IOPS 压力更低**：TiKV 写 IOPS 峰值从第三部分 disable 的约 **2207** 降到本轮 auto 的约 **1465**，离 3000 配额更远。当前 mixed workload 的优化优先级仍应是 **TiKV CPU/节点规模**，而非磁盘扩容。
+5. **口径提醒**：本轮 auto 在正式采样前新增了 60 秒预热，而第三部分 disable 基线未显式包含同等预热。因此第四部分结论对中高并发读写判断可信度较高，但低并发只读的收益可视为略偏乐观。若后续需要形成严格发布级结论，建议补跑一轮带同等预热的 disable 基线。
+
+---
+
+## 附录：第四部分原始数据来源
+
+- sysbench 结果 CSV：`/tmp/bench-dsv6-6node-ps-auto.csv`（clientvm01 本地，tag=`dsv6-6node-ps-auto`）
+- 系统指标 CSV：`/tmp/metrics-dsv6-6node-ps-auto.csv`（含每节点逐组明细，72 行）
+- 指标查询源：Prometheus `http://10.143.0.20:9090`，PromQL 指标 `node_cpu_seconds_total`、`node_network_{receive,transmit}_packets_total`、`node_disk_{read_bytes,written_bytes,reads_completed,writes_completed}_total`（设备 `nvme0n2`）
+- 压测/采集脚本：`scripts/40-prepare-data.sh`、`scripts/41-run-bench-auto.sh`、`scripts/44-export-metrics-auto.sh`
+- 图表生成脚本：`report/_tmp_make_ps_auto_chart.py`（输出 `report/images/ps_disable_vs_auto_qps.png`）
+- disable 基线数据直接引用自本报告第三部分 6 节点结果
